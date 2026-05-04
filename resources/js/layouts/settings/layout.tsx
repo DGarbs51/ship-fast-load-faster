@@ -1,8 +1,6 @@
 import { Link } from '@inertiajs/react';
 import type { PropsWithChildren } from 'react';
-import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { cn, toUrl } from '@/lib/utils';
 import { edit as editAppearance } from '@/routes/appearance';
@@ -32,16 +30,23 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
     const { isCurrentOrParentUrl } = useCurrentUrl();
 
     return (
-        <div className="px-4 py-6">
-            <Heading
-                title="Settings"
-                description="Manage your profile and account settings"
-            />
+        <div className="flex h-full flex-1 flex-col gap-6 p-4 sm:p-6 lg:p-8">
+            <header className="rounded-md bg-zinc-950 p-6 text-white ring-1 ring-zinc-950/10 md:p-8">
+                <p className="text-sm font-medium text-emerald-300">
+                    Account controls
+                </p>
+                <h1 className="mt-4 text-3xl font-semibold tracking-tight text-balance">
+                    Settings
+                </h1>
+                <p className="mt-2 max-w-[58ch] text-base text-pretty text-zinc-400 sm:text-sm">
+                    Manage your profile, security, and workspace appearance.
+                </p>
+            </header>
 
-            <div className="flex flex-col lg:flex-row lg:space-x-12">
-                <aside className="w-full max-w-xl lg:w-48">
+            <div className="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
+                <aside className="w-full">
                     <nav
-                        className="flex flex-col space-y-1 space-x-0"
+                        className="grid gap-2 sm:grid-cols-3 lg:grid-cols-1"
                         aria-label="Settings"
                     >
                         {sidebarNavItems.map((item) => (
@@ -50,9 +55,13 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                                 size="sm"
                                 variant="ghost"
                                 asChild
-                                className={cn('w-full justify-start', {
-                                    'bg-muted': isCurrentOrParentUrl(item.href),
-                                })}
+                                className={cn(
+                                    'w-full justify-start border border-zinc-200 bg-white text-zinc-700 ring-1 ring-zinc-950/5 hover:bg-zinc-100 hover:text-zinc-950 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300 dark:ring-white/10 dark:hover:bg-white/10 dark:hover:text-white',
+                                    {
+                                        'border-zinc-950 bg-zinc-950 text-white hover:bg-zinc-950 hover:text-white dark:border-emerald-400 dark:bg-emerald-400 dark:text-zinc-950 dark:hover:bg-emerald-300 dark:hover:text-zinc-950':
+                                            isCurrentOrParentUrl(item.href),
+                                    },
+                                )}
                             >
                                 <Link href={item.href}>
                                     {item.icon && (
@@ -65,10 +74,8 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                     </nav>
                 </aside>
 
-                <Separator className="my-6 lg:hidden" />
-
-                <div className="flex-1 md:max-w-2xl">
-                    <section className="max-w-xl space-y-12">
+                <div className="min-w-0 flex-1">
+                    <section className="max-w-3xl space-y-8">
                         {children}
                     </section>
                 </div>

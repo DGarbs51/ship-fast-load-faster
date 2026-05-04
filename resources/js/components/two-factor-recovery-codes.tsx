@@ -54,9 +54,12 @@ export default function TwoFactorRecoveryCodes({
 
     return (
         <Card>
-            <CardHeader>
+            <CardHeader className="border-b border-zinc-950/5 pb-4 dark:border-white/10">
                 <CardTitle className="flex gap-3">
-                    <LockKeyhole className="size-4" aria-hidden="true" />
+                    <LockKeyhole
+                        className="size-4 text-emerald-600 dark:text-emerald-300"
+                        aria-hidden="true"
+                    />
                     2FA recovery codes
                 </CardTitle>
                 <CardDescription>
@@ -67,6 +70,8 @@ export default function TwoFactorRecoveryCodes({
             <CardContent>
                 <div className="flex flex-col gap-3 select-none sm:flex-row sm:items-center sm:justify-between">
                     <Button
+                        type="button"
+                        variant="secondary"
                         onClick={toggleCodesVisibility}
                         className="w-fit"
                         aria-expanded={codesAreVisible}
@@ -110,7 +115,7 @@ export default function TwoFactorRecoveryCodes({
                             <>
                                 <div
                                     ref={codesSectionRef}
-                                    className="grid gap-1 rounded-lg bg-muted p-4 font-mono text-sm"
+                                    className="grid gap-1 rounded-md bg-zinc-950 p-4 font-mono text-sm text-zinc-100 ring-1 ring-zinc-950/10 dark:bg-white/10 dark:ring-white/10"
                                     role="list"
                                     aria-label="Recovery codes"
                                 >
@@ -143,7 +148,7 @@ export default function TwoFactorRecoveryCodes({
                                     )}
                                 </div>
 
-                                <div className="text-xs text-muted-foreground select-none">
+                                <div className="text-sm text-zinc-600 select-none dark:text-zinc-400">
                                     <p id="regenerate-warning">
                                         Each recovery code can be used once to
                                         access your account and will be removed

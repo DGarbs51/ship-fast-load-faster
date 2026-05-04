@@ -22,6 +22,22 @@ test('users can authenticate using the login screen', function () {
     $response->assertRedirect(route('dashboard', absolute: false));
 });
 
+test('demo admin user is migrated verified and can authenticate', function () {
+    $user = User::query()
+        ->where('email', 'admin@example.com')
+        ->firstOrFail();
+
+    expect($user->email_verified_at)->not->toBeNull();
+
+    $response = $this->post(route('login.store'), [
+        'email' => 'admin@example.com',
+        'password' => 'password',
+    ]);
+
+    $this->assertAuthenticatedAs($user);
+    $response->assertRedirect(route('dashboard', absolute: false));
+});
+
 test('users with two factor enabled are redirected to two factor challenge', function () {
     $this->skipUnlessFortifyHas(Features::twoFactorAuthentication());
 

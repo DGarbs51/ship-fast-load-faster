@@ -55,7 +55,7 @@ export default function Security({
 
             <h1 className="sr-only">Security settings</h1>
 
-            <div className="space-y-6">
+            <section className="space-y-6 rounded-md border border-zinc-200 bg-white p-6 ring-1 ring-zinc-950/5 dark:border-white/10 dark:bg-white/[0.04] dark:ring-white/10">
                 <Heading
                     variant="small"
                     title="Update password"
@@ -138,6 +138,7 @@ export default function Security({
 
                             <div className="flex items-center gap-4">
                                 <Button
+                                    type="submit"
                                     disabled={processing}
                                     data-test="update-password-button"
                                 >
@@ -147,10 +148,10 @@ export default function Security({
                         </>
                     )}
                 </Form>
-            </div>
+            </section>
 
             {canManageTwoFactor && (
-                <div className="space-y-6">
+                <section className="space-y-6 rounded-md border border-zinc-200 bg-white p-6 ring-1 ring-zinc-950/5 dark:border-white/10 dark:bg-white/[0.04] dark:ring-white/10">
                     <Heading
                         variant="small"
                         title="Two-factor authentication"
@@ -158,7 +159,7 @@ export default function Security({
                     />
                     {twoFactorEnabled ? (
                         <div className="flex flex-col items-start justify-start space-y-4">
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-base text-pretty text-zinc-600 sm:text-sm dark:text-zinc-400">
                                 You will be prompted for a secure, random pin
                                 during login, which you can retrieve from the
                                 TOTP-supported application on your phone.
@@ -186,7 +187,7 @@ export default function Security({
                         </div>
                     ) : (
                         <div className="flex flex-col items-start justify-start space-y-4">
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-base text-pretty text-zinc-600 sm:text-sm dark:text-zinc-400">
                                 When you enable two-factor authentication, you
                                 will be prompted for a secure pin during login.
                                 This pin can be retrieved from a TOTP-supported
@@ -196,6 +197,8 @@ export default function Security({
                             <div>
                                 {hasSetupData ? (
                                     <Button
+                                        type="button"
+                                        variant="secondary"
                                         onClick={() => setShowSetupModal(true)}
                                     >
                                         <ShieldCheck />
@@ -211,6 +214,7 @@ export default function Security({
                                         {({ processing }) => (
                                             <Button
                                                 type="submit"
+                                                variant="secondary"
                                                 disabled={processing}
                                             >
                                                 Enable 2FA
@@ -233,7 +237,7 @@ export default function Security({
                         fetchSetupData={fetchSetupData}
                         errors={errors}
                     />
-                </div>
+                </section>
             )}
         </>
     );

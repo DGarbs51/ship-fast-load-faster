@@ -24,7 +24,7 @@ export default function Profile({
 
             <h1 className="sr-only">Profile settings</h1>
 
-            <div className="space-y-6">
+            <section className="space-y-6 rounded-md border border-zinc-200 bg-white p-6 ring-1 ring-zinc-950/5 dark:border-white/10 dark:bg-white/[0.04] dark:ring-white/10">
                 <Heading
                     variant="small"
                     title="Profile information"
@@ -87,7 +87,7 @@ export default function Profile({
                                             <Link
                                                 href={send()}
                                                 as="button"
-                                                className="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
+                                                className="font-medium text-emerald-700 underline decoration-emerald-300 underline-offset-4 transition-colors duration-300 ease-out hover:text-emerald-600 hover:decoration-current! dark:text-emerald-300 dark:decoration-emerald-500/50 dark:hover:text-emerald-200"
                                             >
                                                 Click here to resend the
                                                 verification email.
@@ -96,7 +96,7 @@ export default function Profile({
 
                                         {status ===
                                             'verification-link-sent' && (
-                                            <div className="mt-2 text-sm font-medium text-green-600">
+                                            <div className="mt-2 text-sm font-medium text-emerald-700 dark:text-emerald-300">
                                                 A new verification link has been
                                                 sent to your email address.
                                             </div>
@@ -106,6 +106,7 @@ export default function Profile({
 
                             <div className="flex items-center gap-4">
                                 <Button
+                                    type="submit"
                                     disabled={processing}
                                     data-test="update-profile-button"
                                 >
@@ -115,7 +116,7 @@ export default function Profile({
                         </>
                     )}
                 </Form>
-            </div>
+            </section>
 
             <DeleteUser />
         </>

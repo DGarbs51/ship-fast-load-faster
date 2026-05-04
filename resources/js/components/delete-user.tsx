@@ -20,16 +20,16 @@ export default function DeleteUser() {
     const passwordInput = useRef<HTMLInputElement>(null);
 
     return (
-        <div className="space-y-6">
+        <section className="space-y-6 rounded-md border border-red-200 bg-red-50 p-6 ring-1 ring-red-100 dark:border-red-400/20 dark:bg-red-500/10 dark:ring-red-400/10">
             <Heading
                 variant="small"
                 title="Delete account"
                 description="Delete your account and all of its resources"
             />
-            <div className="space-y-4 rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10">
-                <div className="relative space-y-0.5 text-red-600 dark:text-red-100">
+            <div className="space-y-4">
+                <div className="relative space-y-0.5 text-red-700 dark:text-red-100">
                     <p className="font-medium">Warning</p>
-                    <p className="text-sm">
+                    <p className="text-base text-pretty sm:text-sm">
                         Please proceed with caution, this cannot be undone.
                     </p>
                 </div>
@@ -115,6 +115,6 @@ export default function DeleteUser() {
                     </DialogContent>
                 </Dialog>
             </div>
-        </div>
+        </section>
     );
 }

@@ -73,7 +73,7 @@ export default function Login({
                                 <InputError message={errors.password} />
                             </div>
 
-                            <div className="flex items-center space-x-3">
+                            <div className="flex items-center gap-3">
                                 <Checkbox
                                     id="remember"
                                     name="remember"
@@ -107,7 +107,7 @@ export default function Login({
             </Form>
 
             {status && (
-                <div className="mb-4 text-center text-sm font-medium text-green-600">
+                <div className="mb-4 rounded-md bg-emerald-400/10 px-3 py-2 text-center text-sm font-medium text-emerald-300 ring-1 ring-emerald-300/20">
                     {status}
                 </div>
             )}

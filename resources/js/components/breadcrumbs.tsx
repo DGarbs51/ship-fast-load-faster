@@ -24,10 +24,10 @@ export function Breadcrumbs({
                             const isLast = index === breadcrumbs.length - 1;
 
                             return (
-                                <Fragment key={item.href}>
+                                <Fragment key={`${item.title}-${index}`}>
                                     <BreadcrumbItem>
                                         {isLast ? (
-                                            <BreadcrumbPage>
+                                            <BreadcrumbPage className="font-medium text-zinc-950 dark:text-white">
                                                 {item.title}
                                             </BreadcrumbPage>
                                         ) : (
