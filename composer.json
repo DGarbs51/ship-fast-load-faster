@@ -1,0 +1,140 @@
+{
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "dgarbs51/ship-fast-load-faster",
+    "type": "project",
+    "description": "Workshop repository for Ship Fast Load Faster, a Laravel 13 and Inertia React application focused on shipping quickly while keeping the app fast.",
+    "keywords": [
+        "ship-fast-load-faster",
+        "laravel",
+        "inertia",
+        "react",
+        "workshop",
+        "performance",
+        "fortify",
+        "wayfinder",
+        "tailwindcss",
+        "pest"
+    ],
+    "authors": [
+        {
+            "name": "DGarbs51",
+            "homepage": "https://github.com/DGarbs51",
+            "role": "Workshop Author"
+        }
+    ],
+    "homepage": "https://github.com/DGarbs51/ship-fast-load-faster",
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/DGarbs51/ship-fast-load-faster/issues",
+        "source": "https://github.com/DGarbs51/ship-fast-load-faster"
+    },
+    "require": {
+        "php": "^8.5",
+        "inertiajs/inertia-laravel": "^3.0",
+        "laravel/fortify": "^1.37",
+        "laravel/framework": "^13.7",
+        "laravel/tinker": "^3.0",
+        "laravel/wayfinder": "^0.1.14"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.24",
+        "fruitcake/laravel-debugbar": "^4.2",
+        "laravel/boost": "^2.2",
+        "laravel/pao": "^1.0.6",
+        "laravel/pint": "^1.27",
+        "laravel/telescope": "^5.20",
+        "mockery/mockery": "^1.6",
+        "nunomaduro/collision": "^8.9.3",
+        "pestphp/pest": "^4.7",
+        "pestphp/pest-plugin-laravel": "^4.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "setup": [
+            "composer install",
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+            "@php artisan key:generate",
+            "@php artisan migrate --force",
+            "npm install",
+            "npm run build"
+        ],
+        "dev": [
+            "Composer\\Config::disableProcessTimeout",
+            "npx concurrently -c \"#93c5fd,#c4b5fd,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1 --timeout=0\" \"npm run dev\" --names=server,queue,vite --kill-others"
+        ],
+        "lint": [
+            "pint --parallel"
+        ],
+        "lint:check": [
+            "pint --parallel --test"
+        ],
+        "ci:check": [
+            "Composer\\Config::disableProcessTimeout",
+            "npm run lint:check",
+            "npm run format:check",
+            "npm run types:check",
+            "@test"
+        ],
+        "test": [
+            "@php artisan config:clear --ansi",
+            "@lint:check",
+            "@php artisan test"
+        ],
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
+            "@php artisan boost:update --ansi"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi",
+            "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
+            "@php artisan migrate --graceful --ansi"
+        ],
+        "pre-package-uninstall": [
+            "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
+        ]
+    },
+    "scripts-descriptions": {
+        "setup": "Install dependencies, create the local environment file, generate the app key, run migrations, and build frontend assets.",
+        "dev": "Start the Laravel development server, queue listener, and Vite dev server concurrently.",
+        "lint": "Format PHP files with Laravel Pint.",
+        "lint:check": "Check PHP formatting with Laravel Pint.",
+        "ci:check": "Run JavaScript linting, formatting, type checks, and the PHP test suite.",
+        "test": "Clear cached configuration, check PHP formatting, and run the Pest test suite."
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": [
+                "fruitcake/laravel-debugbar",
+                "laravel/telescope"
+            ]
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true
+        }
+    },
+    "minimum-stability": "stable"
+}
