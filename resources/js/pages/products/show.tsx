@@ -71,23 +71,23 @@ export default function ProductShow({
             <Head title={product.name} />
 
             <div className="flex h-full flex-1 flex-col gap-6 p-4 sm:p-6 lg:p-8">
-                <header className="space-y-4 rounded-md bg-zinc-950 p-6 text-white ring-1 ring-zinc-950/10 md:p-8">
+                <header className="space-y-4 rounded-md border border-border bg-card p-6 text-card-foreground md:p-8">
                     <Link
                         href={productsIndex()}
-                        className="inline-flex items-center gap-2 text-sm font-medium text-zinc-400 hover:text-white"
+                        className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground"
                     >
                         <ArrowLeft className="size-4" />
                         Products
                     </Link>
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                         <div>
-                            <p className="text-sm font-medium text-emerald-300">
+                            <p className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
                                 Product signal
                             </p>
                             <h1 className="mt-3 text-3xl font-semibold tracking-tight text-balance">
                                 {product.name}
                             </h1>
-                            <p className="mt-2 max-w-3xl text-base text-pretty text-zinc-400 sm:text-sm">
+                            <p className="mt-2 max-w-3xl text-base text-pretty text-muted-foreground sm:text-sm">
                                 {product.description}
                             </p>
                         </div>
@@ -101,8 +101,8 @@ export default function ProductShow({
 
                 <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                     <Card>
-                        <CardContent className="pt-6">
-                            <p className="truncate text-base text-zinc-600 sm:text-sm dark:text-zinc-400">
+                        <CardContent>
+                            <p className="truncate text-base text-muted-foreground sm:text-sm">
                                 Price
                             </p>
                             <p className="mt-2 text-3xl font-semibold tabular-nums">
@@ -111,8 +111,8 @@ export default function ProductShow({
                         </CardContent>
                     </Card>
                     <Card>
-                        <CardContent className="pt-6">
-                            <p className="truncate text-base text-zinc-600 sm:text-sm dark:text-zinc-400">
+                        <CardContent>
+                            <p className="truncate text-base text-muted-foreground sm:text-sm">
                                 Units sold
                             </p>
                             <p className="mt-2 text-3xl font-semibold tabular-nums">
@@ -121,8 +121,8 @@ export default function ProductShow({
                         </CardContent>
                     </Card>
                     <Card>
-                        <CardContent className="pt-6">
-                            <p className="truncate text-base text-zinc-600 sm:text-sm dark:text-zinc-400">
+                        <CardContent>
+                            <p className="truncate text-base text-muted-foreground sm:text-sm">
                                 Revenue
                             </p>
                             <p className="mt-2 text-3xl font-semibold tabular-nums">
@@ -131,8 +131,8 @@ export default function ProductShow({
                         </CardContent>
                     </Card>
                     <Card>
-                        <CardContent className="pt-6">
-                            <p className="truncate text-base text-zinc-600 sm:text-sm dark:text-zinc-400">
+                        <CardContent>
+                            <p className="truncate text-base text-muted-foreground sm:text-sm">
                                 Rating
                             </p>
                             <p className="mt-2 text-3xl font-semibold tabular-nums">
@@ -142,14 +142,14 @@ export default function ProductShow({
                     </Card>
                 </div>
 
-                <div className="grid gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(340px,1fr)]">
+                <div className="grid gap-4 xl:grid-cols-[minmax(0,2.6fr)_minmax(260px,1fr)]">
                     <Card>
-                        <CardHeader className="border-b border-zinc-950/5 pb-4 dark:border-white/10">
+                        <CardHeader className="border-b border-border pb-4">
                             <CardTitle>Recent orders</CardTitle>
                         </CardHeader>
-                        <CardContent className="overflow-x-auto">
-                            <table className="w-full min-w-[680px] text-sm">
-                                <thead className="border-b border-zinc-950/5 text-left text-zinc-500 dark:border-white/10 dark:text-zinc-400">
+                        <CardContent className="max-h-[28rem] overflow-y-auto">
+                            <table className="w-full text-sm">
+                                <thead className="sticky top-0 border-b border-border bg-card text-left text-muted-foreground">
                                     <tr>
                                         <th className="pb-3 font-medium">
                                             Order
@@ -180,20 +180,20 @@ export default function ProductShow({
                                                         href={orderShow(
                                                             order.id,
                                                         )}
-                                                        className="text-zinc-950 hover:text-emerald-700 dark:text-white dark:hover:text-emerald-300"
+                                                        className="text-foreground hover:text-emerald-700 dark:hover:text-emerald-300"
                                                     >
                                                         {order.number}
                                                     </Link>
                                                 ) : (
                                                     order.number
                                                 )}
-                                                <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                                                <p className="text-sm text-muted-foreground">
                                                     {formatDateTime(
                                                         order.created_at,
                                                     )}
                                                 </p>
                                             </td>
-                                            <td className="py-3 text-zinc-600 dark:text-zinc-400">
+                                            <td className="py-3 text-muted-foreground">
                                                 {order.customer ?? 'Guest'}
                                             </td>
                                             <td className="py-3">
@@ -225,12 +225,12 @@ export default function ProductShow({
                     </Card>
 
                     <Card>
-                        <CardHeader className="border-b border-zinc-950/5 pb-4 dark:border-white/10">
+                        <CardHeader className="border-b border-border pb-4">
                             <CardTitle>Product details</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4 text-sm">
                             <div className="flex items-center justify-between gap-4">
-                                <span className="text-zinc-600 dark:text-zinc-400">
+                                <span className="text-muted-foreground">
                                     SKU
                                 </span>
                                 <span className="font-medium">
@@ -238,7 +238,7 @@ export default function ProductShow({
                                 </span>
                             </div>
                             <div className="flex items-center justify-between gap-4">
-                                <span className="text-zinc-600 dark:text-zinc-400">
+                                <span className="text-muted-foreground">
                                     Category
                                 </span>
                                 <span className="font-medium">
@@ -246,7 +246,7 @@ export default function ProductShow({
                                 </span>
                             </div>
                             <div className="flex items-center justify-between gap-4">
-                                <span className="text-zinc-600 dark:text-zinc-400">
+                                <span className="text-muted-foreground">
                                     Stock
                                 </span>
                                 <span className="font-medium">
@@ -254,7 +254,7 @@ export default function ProductShow({
                                 </span>
                             </div>
                             <div className="flex items-center justify-between gap-4">
-                                <span className="text-zinc-600 dark:text-zinc-400">
+                                <span className="text-muted-foreground">
                                     Reviews
                                 </span>
                                 <span className="font-medium">
@@ -262,8 +262,8 @@ export default function ProductShow({
                                 </span>
                             </div>
                             <div className="flex items-center justify-between gap-4">
-                                <span className="inline-flex items-center gap-2 text-zinc-600 dark:text-zinc-400">
-                                    <ShoppingCart className="size-4 text-emerald-600 dark:text-emerald-300" />
+                                <span className="inline-flex items-center gap-2 text-muted-foreground">
+                                    <ShoppingCart className="size-4 text-emerald-700 dark:text-emerald-300" />
                                     Sales
                                 </span>
                                 <span className="font-medium">
@@ -275,10 +275,10 @@ export default function ProductShow({
                 </div>
 
                 <Card>
-                    <CardHeader className="border-b border-zinc-950/5 pb-4 dark:border-white/10">
+                    <CardHeader className="border-b border-border pb-4">
                         <CardTitle>Reviews</CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-5">
+                    <CardContent className="max-h-[32rem] space-y-5 overflow-y-auto">
                         {reviews.map((review) => (
                             <article
                                 key={review.id}
@@ -289,7 +289,7 @@ export default function ProductShow({
                                         <h2 className="font-medium">
                                             {review.title}
                                         </h2>
-                                        <p className="text-base text-zinc-600 sm:text-sm dark:text-zinc-400">
+                                        <p className="text-base text-muted-foreground sm:text-sm">
                                             {review.customer ?? 'Customer'} -{' '}
                                             {formatDateTime(review.created_at)}
                                         </p>
@@ -299,7 +299,7 @@ export default function ProductShow({
                                         {review.rating}
                                     </span>
                                 </div>
-                                <p className="mt-3 text-base text-pretty text-zinc-700 sm:text-sm dark:text-zinc-300">
+                                <p className="mt-3 text-base text-pretty text-foreground sm:text-sm">
                                     {review.body}
                                 </p>
                             </article>

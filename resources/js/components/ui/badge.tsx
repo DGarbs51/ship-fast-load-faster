@@ -10,13 +10,13 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:
-          "border-transparent bg-emerald-400 text-zinc-950 [a&]:hover:bg-emerald-300",
+          "border-transparent bg-emerald-500 text-white [a&]:hover:bg-emerald-400 dark:bg-emerald-400 dark:text-zinc-950 dark:[a&]:hover:bg-emerald-300",
         secondary:
-          "border-amber-200 bg-amber-50 text-amber-800 [a&]:hover:bg-amber-100 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-200",
+          "border-amber-300 bg-amber-100 text-amber-900 [a&]:hover:bg-amber-200 dark:border-amber-400/30 dark:bg-amber-400/15 dark:text-amber-200 dark:[a&]:hover:bg-amber-400/25",
         destructive:
-          "border-red-200 bg-red-50 text-red-700 [a&]:hover:bg-red-100 focus-visible:ring-destructive/20 dark:border-red-400/20 dark:bg-red-500/10 dark:text-red-200 dark:focus-visible:ring-destructive/40",
+          "border-red-300 bg-red-100 text-red-800 [a&]:hover:bg-red-200 focus-visible:ring-destructive/20 dark:border-red-400/30 dark:bg-red-500/15 dark:text-red-200 dark:[a&]:hover:bg-red-500/25 dark:focus-visible:ring-destructive/40",
         outline:
-          "border-zinc-200 bg-white text-zinc-700 [a&]:hover:bg-zinc-100 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-200 dark:[a&]:hover:bg-white/10",
+          "border-border bg-muted text-foreground [a&]:hover:bg-accent",
       },
     },
     defaultVariants: {

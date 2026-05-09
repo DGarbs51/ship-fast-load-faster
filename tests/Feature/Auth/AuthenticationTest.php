@@ -2,7 +2,6 @@
 
 use App\Models\User;
 use Illuminate\Support\Facades\RateLimiter;
-use Laravel\Fortify\Features;
 
 test('login screen can be rendered', function () {
     $response = $this->get(route('login'));
@@ -22,12 +21,10 @@ test('users can authenticate using the login screen', function () {
     $response->assertRedirect(route('dashboard', absolute: false));
 });
 
-test('demo admin user is migrated verified and can authenticate', function () {
+test('demo admin user can authenticate', function () {
     $user = User::query()
         ->where('email', 'admin@example.com')
         ->firstOrFail();
-
-    expect($user->email_verified_at)->not->toBeNull();
 
     $response = $this->post(route('login.store'), [
         'email' => 'admin@example.com',
@@ -36,32 +33,6 @@ test('demo admin user is migrated verified and can authenticate', function () {
 
     $this->assertAuthenticatedAs($user);
     $response->assertRedirect(route('dashboard', absolute: false));
-});
-
-test('users with two factor enabled are redirected to two factor challenge', function () {
-    $this->skipUnlessFortifyHas(Features::twoFactorAuthentication());
-
-    Features::twoFactorAuthentication([
-        'confirm' => true,
-        'confirmPassword' => true,
-    ]);
-
-    $user = User::factory()->create();
-
-    $user->forceFill([
-        'two_factor_secret' => encrypt('test-secret'),
-        'two_factor_recovery_codes' => encrypt(json_encode(['code1', 'code2'])),
-        'two_factor_confirmed_at' => now(),
-    ])->save();
-
-    $response = $this->post(route('login'), [
-        'email' => $user->email,
-        'password' => 'password',
-    ]);
-
-    $response->assertRedirect(route('two-factor.login'));
-    $response->assertSessionHas('login.id', $user->id);
-    $this->assertGuest();
 });
 
 test('users can not authenticate with invalid password', function () {

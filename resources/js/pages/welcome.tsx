@@ -106,14 +106,14 @@ export default function Welcome({
         <>
             <Head title="Ship Fast, Load Faster" />
 
-            <div className="isolate min-h-dvh bg-zinc-950 text-white antialiased">
+            <div className="isolate min-h-dvh bg-background text-foreground antialiased">
                 <header className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-5 lg:px-8">
                     <Link
                         href={home()}
                         aria-label="Homepage"
                         className="flex items-center gap-3"
                     >
-                        <span className="flex size-9 items-center justify-center rounded-md bg-white text-zinc-950">
+                        <span className="flex size-9 items-center justify-center rounded-md bg-foreground text-background">
                             <AppLogoIcon className="size-5 fill-current" />
                         </span>
                         <div className="text-sm font-semibold">
@@ -125,7 +125,7 @@ export default function Welcome({
                         {auth.user ? (
                             <Link
                                 href={dashboard()}
-                                className="rounded-md px-3 py-2 text-sm font-medium text-zinc-200 transition hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-300"
+                                className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 dark:focus-visible:outline-emerald-300"
                             >
                                 Dashboard
                             </Link>
@@ -133,14 +133,14 @@ export default function Welcome({
                             <>
                                 <Link
                                     href={login()}
-                                    className="rounded-md px-3 py-2 text-sm font-medium text-zinc-200 transition hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-300"
+                                    className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 dark:focus-visible:outline-emerald-300"
                                 >
                                     Log in
                                 </Link>
                                 {canRegister && (
                                     <Link
                                         href={register()}
-                                        className="rounded-md border border-white/15 px-3 py-2 text-sm font-medium text-white transition hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-300"
+                                        className="rounded-md border border-border px-3 py-2 text-sm font-medium text-foreground transition hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 dark:focus-visible:outline-emerald-300"
                                     >
                                         Register
                                     </Link>
@@ -154,14 +154,14 @@ export default function Welcome({
                     <section className="px-6 pt-12 pb-20 sm:pt-16 lg:px-8 lg:pt-20">
                         <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[9fr_8fr] lg:items-center">
                             <div>
-                                <p className="flex items-center gap-2 text-sm font-medium text-emerald-300">
+                                <p className="flex items-center gap-2 text-sm font-medium text-emerald-700 dark:text-emerald-300">
                                     <Package className="size-4" />
                                     Commerce operations for faster fulfillment
                                 </p>
                                 <h1 className="mt-6 max-w-[12ch] text-5xl font-semibold tracking-tight text-balance sm:text-6xl lg:text-7xl">
                                     Ship faster with every signal in view.
                                 </h1>
-                                <p className="mt-6 max-w-[58ch] text-lg text-pretty text-zinc-300">
+                                <p className="mt-6 max-w-[58ch] text-lg text-pretty text-muted-foreground">
                                     A focused command center for orders, catalog
                                     health, revenue, and customers. Keep your
                                     store moving without bouncing between
@@ -170,7 +170,7 @@ export default function Welcome({
                                 <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                                     <Link
                                         href={primaryHref}
-                                        className="inline-flex items-center justify-center gap-2 rounded-md bg-emerald-400 px-4 py-3 text-sm font-semibold text-zinc-950 transition hover:bg-emerald-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-300"
+                                        className="inline-flex items-center justify-center gap-2 rounded-md bg-emerald-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 dark:bg-emerald-400 dark:text-zinc-950 dark:hover:bg-emerald-300 dark:focus-visible:outline-emerald-300"
                                     >
                                         {primaryLabel}
                                         <ArrowRight className="size-4" />
@@ -178,7 +178,7 @@ export default function Welcome({
                                     {!auth.user && (
                                         <Link
                                             href={login()}
-                                            className="inline-flex items-center justify-center rounded-md px-4 py-3 text-sm font-semibold text-zinc-100 transition hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-300"
+                                            className="inline-flex items-center justify-center rounded-md px-4 py-3 text-sm font-semibold text-foreground transition hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 dark:focus-visible:outline-emerald-300"
                                         >
                                             View your workspace
                                         </Link>
@@ -187,15 +187,15 @@ export default function Welcome({
                             </div>
 
                             <div className="relative">
-                                <div className="overflow-hidden rounded-md bg-white/10 p-2 shadow-2xl ring-1 shadow-black/30 ring-white/15">
-                                    <div className="rounded-md bg-zinc-950 ring-1 ring-white/10">
-                                        <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+                                <div className="overflow-hidden rounded-md border border-border bg-muted p-2 shadow-2xl shadow-black/10 dark:shadow-none">
+                                    <div className="rounded-md border border-border bg-card">
+                                        <div className="flex items-center justify-between border-b border-border px-4 py-3">
                                             <div className="flex items-center gap-2">
                                                 <span className="size-2 rounded-full bg-rose-400" />
                                                 <span className="size-2 rounded-full bg-amber-300" />
                                                 <span className="size-2 rounded-full bg-emerald-400" />
                                             </div>
-                                            <div className="text-sm font-medium text-zinc-300">
+                                            <div className="text-sm font-medium text-muted-foreground">
                                                 Store dashboard
                                             </div>
                                         </div>
@@ -204,16 +204,16 @@ export default function Welcome({
                                             {metrics.map((metric) => (
                                                 <div
                                                     key={metric.label}
-                                                    className="rounded-md bg-white/[0.06] p-4 ring-1 ring-white/10"
+                                                    className="rounded-md border border-border bg-background p-4"
                                                 >
-                                                    <p className="text-sm text-zinc-400">
+                                                    <p className="text-sm text-muted-foreground">
                                                         {metric.label}
                                                     </p>
                                                     <div className="mt-3 flex items-end justify-between gap-3">
                                                         <p className="text-2xl font-semibold tabular-nums">
                                                             {metric.value}
                                                         </p>
-                                                        <div className="rounded-sm bg-emerald-400/10 px-2 py-1 text-sm font-medium text-emerald-300 tabular-nums">
+                                                        <div className="rounded-sm bg-emerald-500/10 px-2 py-1 text-sm font-medium text-emerald-700 tabular-nums dark:text-emerald-300">
                                                             {metric.change}
                                                         </div>
                                                     </div>
@@ -222,18 +222,18 @@ export default function Welcome({
                                         </div>
 
                                         <div className="grid gap-4 px-4 pb-4 lg:grid-cols-[7fr_5fr]">
-                                            <div className="rounded-md bg-white/[0.06] p-4 ring-1 ring-white/10">
+                                            <div className="rounded-md border border-border bg-background p-4">
                                                 <div className="flex items-center justify-between gap-4">
                                                     <div>
                                                         <p className="font-medium">
                                                             Fulfillment flow
                                                         </p>
-                                                        <p className="text-sm text-zinc-400">
+                                                        <p className="text-sm text-muted-foreground">
                                                             Orders by current
                                                             state
                                                         </p>
                                                     </div>
-                                                    <Clock3 className="size-5 text-emerald-300" />
+                                                    <Clock3 className="size-5 text-emerald-700 dark:text-emerald-300" />
                                                 </div>
                                                 <div className="mt-6 flex flex-col gap-4">
                                                     {fulfillmentFlow.map(
@@ -244,18 +244,18 @@ export default function Welcome({
                                                                 }
                                                             >
                                                                 <div className="flex justify-between gap-4 text-sm">
-                                                                    <div className="text-zinc-300">
+                                                                    <div className="text-foreground">
                                                                         {
                                                                             status.label
                                                                         }
                                                                     </div>
-                                                                    <div className="text-zinc-500 tabular-nums">
+                                                                    <div className="text-muted-foreground tabular-nums">
                                                                         {
                                                                             status.width
                                                                         }
                                                                     </div>
                                                                 </div>
-                                                                <div className="mt-2 h-2 rounded-full bg-white/10">
+                                                                <div className="mt-2 h-2 rounded-full bg-muted">
                                                                     <div
                                                                         className={`${status.colorClass} ${status.widthClass} h-2 rounded-full`}
                                                                     />
@@ -266,26 +266,26 @@ export default function Welcome({
                                                 </div>
                                             </div>
 
-                                            <div className="rounded-md bg-white/[0.06] p-4 ring-1 ring-white/10">
+                                            <div className="rounded-md border border-border bg-background p-4">
                                                 <div className="flex items-center justify-between gap-4">
                                                     <div>
                                                         <p className="font-medium">
                                                             Top mover
                                                         </p>
-                                                        <p className="text-sm text-zinc-400">
+                                                        <p className="text-sm text-muted-foreground">
                                                             Revenue impact
                                                         </p>
                                                     </div>
-                                                    <DollarSign className="size-5 text-emerald-300" />
+                                                    <DollarSign className="size-5 text-emerald-700 dark:text-emerald-300" />
                                                 </div>
-                                                <div className="mt-6 rounded-md bg-zinc-900 p-4">
-                                                    <p className="text-sm text-zinc-400">
+                                                <div className="mt-6 rounded-md bg-muted p-4">
+                                                    <p className="text-sm text-muted-foreground">
                                                         Carbon fiber carry-on
                                                     </p>
                                                     <p className="mt-2 text-3xl font-semibold tabular-nums">
                                                         $48,920
                                                     </p>
-                                                    <div className="mt-4 flex items-center gap-2 text-sm text-emerald-300">
+                                                    <div className="mt-4 flex items-center gap-2 text-sm text-emerald-700 dark:text-emerald-300">
                                                         <CheckCircle2 className="size-4" />
                                                         Reorder threshold met
                                                     </div>
@@ -298,7 +298,7 @@ export default function Welcome({
                         </div>
                     </section>
 
-                    <section className="border-y border-white/10 bg-white/[0.03] py-10">
+                    <section className="border-y border-border bg-muted/40 py-10">
                         <div className="mx-auto grid max-w-7xl gap-6 px-6 sm:grid-cols-3 lg:px-8">
                             {[
                                 [
@@ -318,7 +318,7 @@ export default function Welcome({
                                     <p className="text-lg font-semibold">
                                         {title}
                                     </p>
-                                    <p className="mt-2 text-base text-pretty text-zinc-400">
+                                    <p className="mt-2 text-base text-pretty text-muted-foreground">
                                         {description}
                                     </p>
                                 </div>
@@ -326,14 +326,14 @@ export default function Welcome({
                         </div>
                     </section>
 
-                    <section className="bg-zinc-50 py-20 text-zinc-950 lg:py-24 dark:bg-zinc-950 dark:text-white">
+                    <section className="bg-muted/30 py-20 lg:py-24">
                         <div className="mx-auto max-w-7xl px-6 lg:px-8">
                             <div className="max-w-[62ch]">
                                 <h2 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
                                     Built for the daily rhythm of a growing
                                     store.
                                 </h2>
-                                <p className="mt-4 text-lg text-pretty text-zinc-600 dark:text-zinc-400">
+                                <p className="mt-4 text-lg text-pretty text-muted-foreground">
                                     The homepage mirrors the workspace inside:
                                     compact, readable, and built around the
                                     operational questions teams ask every day.
@@ -344,15 +344,15 @@ export default function Welcome({
                                 {features.map((feature) => (
                                     <div
                                         key={feature.title}
-                                        className="rounded-md bg-white p-6 ring-1 ring-zinc-200 dark:bg-white/[0.04] dark:ring-white/10"
+                                        className="rounded-md border border-border bg-card p-6"
                                     >
                                         <dt>
-                                            <feature.icon className="size-6 text-emerald-600 dark:text-emerald-300" />
+                                            <feature.icon className="size-6 text-emerald-700 dark:text-emerald-300" />
                                             <span className="mt-5 block font-semibold">
                                                 {feature.title}
                                             </span>
                                         </dt>
-                                        <dd className="mt-3 text-base text-pretty text-zinc-600 dark:text-zinc-400">
+                                        <dd className="mt-3 text-base text-pretty text-muted-foreground">
                                             {feature.description}
                                         </dd>
                                     </div>
@@ -361,13 +361,13 @@ export default function Welcome({
                         </div>
                     </section>
 
-                    <section className="bg-white py-20 text-zinc-950 lg:py-24 dark:bg-zinc-900 dark:text-white">
+                    <section className="bg-background py-20 lg:py-24">
                         <div className="mx-auto grid max-w-7xl gap-10 px-6 lg:grid-cols-[7fr_5fr] lg:items-start lg:px-8">
                             <div>
                                 <h2 className="max-w-[14ch] text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
                                     A cleaner morning standup for operations.
                                 </h2>
-                                <p className="mt-4 max-w-[58ch] text-lg text-pretty text-zinc-600 dark:text-zinc-400">
+                                <p className="mt-4 max-w-[58ch] text-lg text-pretty text-muted-foreground">
                                     Start with a clear picture of fulfillment,
                                     stock, product winners, and customer
                                     movement. Then move directly into the
@@ -375,8 +375,8 @@ export default function Welcome({
                                 </p>
                             </div>
 
-                            <div className="rounded-md bg-zinc-950 p-6 text-white ring-1 ring-zinc-950/10 dark:bg-white/[0.04] dark:ring-white/10">
-                                <p className="text-sm font-medium text-emerald-300">
+                            <div className="rounded-md border border-border bg-card p-6">
+                                <p className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
                                     Today&apos;s operating loop
                                 </p>
                                 <ol
@@ -388,10 +388,10 @@ export default function Welcome({
                                             key={item}
                                             className="flex items-start gap-4"
                                         >
-                                            <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-emerald-400 text-sm font-semibold text-zinc-950 tabular-nums">
+                                            <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-sm font-semibold text-white tabular-nums dark:bg-emerald-400 dark:text-zinc-950">
                                                 {index + 1}
                                             </div>
-                                            <div className="text-base text-pretty text-zinc-300">
+                                            <div className="text-base text-pretty text-muted-foreground">
                                                 {item}
                                             </div>
                                         </li>

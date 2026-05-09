@@ -11,7 +11,7 @@ Route::inertia('/', 'welcome', [
     'canRegister' => Features::enabled(Features::registration()),
 ])->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
     Route::resource('products', ProductController::class)->only(['index', 'show']);
     Route::resource('orders', OrderController::class)->only(['index', 'show']);
@@ -19,5 +19,3 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('customers/export', [CustomerController::class, 'export'])->name('customers.export');
     Route::resource('customers', CustomerController::class)->only(['index']);
 });
-
-require __DIR__.'/settings.php';

@@ -52,8 +52,8 @@ export function Pagination({
                         className={cn(
                             'inline-flex h-9 min-w-9 items-center justify-center gap-1 rounded-md border px-3 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500',
                             link.active
-                                ? 'border-emerald-400 bg-emerald-400 text-zinc-950 hover:bg-emerald-300'
-                                : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-100 hover:text-zinc-950 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300 dark:hover:bg-white/10 dark:hover:text-white',
+                                ? 'border-emerald-500 bg-emerald-500 text-white hover:bg-emerald-400 dark:border-emerald-400 dark:bg-emerald-400 dark:text-zinc-950 dark:hover:bg-emerald-300'
+                                : 'border-border bg-card text-foreground hover:bg-muted',
                         )}
                     >
                         {paginationLabel(link.label)}
@@ -61,7 +61,7 @@ export function Pagination({
                 ) : (
                     <span
                         key={`${link.label}-${index}`}
-                        className="inline-flex h-9 min-w-9 items-center justify-center gap-1 rounded-md border border-zinc-200 bg-zinc-100 px-3 text-sm text-zinc-500 dark:border-white/10 dark:bg-white/5 dark:text-zinc-500"
+                        className="inline-flex h-9 min-w-9 items-center justify-center gap-1 rounded-md border border-border bg-muted px-3 text-sm text-muted-foreground"
                     >
                         {paginationLabel(link.label)}
                     </span>

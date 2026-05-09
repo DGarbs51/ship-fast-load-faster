@@ -1,5 +1,5 @@
 import { Form, Head, Link } from '@inertiajs/react';
-import { ArrowLeft, Save, UserRound } from 'lucide-react';
+import { ArrowLeft, ChevronDown, Save, UserRound } from 'lucide-react';
 import OrderController from '@/actions/App/Http/Controllers/OrderController';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -62,23 +62,23 @@ export default function OrderShow({
             <Head title={order.number} />
 
             <div className="flex h-full flex-1 flex-col gap-6 p-4 sm:p-6 lg:p-8">
-                <header className="space-y-4 rounded-md bg-zinc-950 p-6 text-white ring-1 ring-zinc-950/10 md:p-8">
+                <header className="space-y-4 rounded-md border border-border bg-card p-6 text-card-foreground md:p-8">
                     <Link
                         href={ordersIndex()}
-                        className="inline-flex items-center gap-2 text-sm font-medium text-zinc-400 hover:text-white"
+                        className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground"
                     >
                         <ArrowLeft className="size-4" />
                         Orders
                     </Link>
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                         <div>
-                            <p className="text-sm font-medium text-emerald-300">
+                            <p className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
                                 Order detail
                             </p>
                             <h1 className="mt-3 text-3xl font-semibold tracking-tight text-balance">
                                 {order.number}
                             </h1>
-                            <p className="mt-2 text-base text-zinc-400 sm:text-sm">
+                            <p className="mt-2 text-base text-muted-foreground sm:text-sm">
                                 Placed {formatDateTime(order.created_at)}
                             </p>
                         </div>
@@ -90,12 +90,12 @@ export default function OrderShow({
 
                 <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
                     <Card>
-                        <CardHeader className="border-b border-zinc-950/5 pb-4 dark:border-white/10">
+                        <CardHeader className="border-b border-border pb-4">
                             <CardTitle>Line items</CardTitle>
                         </CardHeader>
                         <CardContent className="overflow-x-auto">
                             <table className="w-full min-w-[680px] text-sm">
-                                <thead className="border-b border-zinc-950/5 text-left text-zinc-500 dark:border-white/10 dark:text-zinc-400">
+                                <thead className="border-b border-border text-left text-muted-foreground">
                                     <tr>
                                         <th className="pb-3 font-medium">
                                             Product
@@ -126,7 +126,7 @@ export default function OrderShow({
                                                         href={productShow(
                                                             item.product_id,
                                                         )}
-                                                        className="text-zinc-950 hover:text-emerald-700 dark:text-white dark:hover:text-emerald-300"
+                                                        className="text-foreground hover:text-emerald-700 dark:hover:text-emerald-300"
                                                     >
                                                         {item.product}
                                                     </Link>
@@ -134,7 +134,7 @@ export default function OrderShow({
                                                     (item.product ?? 'Product')
                                                 )}
                                             </td>
-                                            <td className="py-3 text-zinc-600 dark:text-zinc-400">
+                                            <td className="py-3 text-muted-foreground">
                                                 {item.sku ?? 'Unknown'}
                                             </td>
                                             <td className="py-3 text-right">
@@ -159,12 +159,12 @@ export default function OrderShow({
 
                     <div className="space-y-4">
                         <Card>
-                            <CardHeader className="border-b border-zinc-950/5 pb-4 dark:border-white/10">
+                            <CardHeader className="border-b border-border pb-4">
                                 <CardTitle>Order summary</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4 text-sm">
                                 <div className="flex items-center justify-between gap-4">
-                                    <span className="text-zinc-600 dark:text-zinc-400">
+                                    <span className="text-muted-foreground">
                                         Items
                                     </span>
                                     <span className="font-medium">
@@ -172,7 +172,7 @@ export default function OrderShow({
                                     </span>
                                 </div>
                                 <div className="flex items-center justify-between gap-4">
-                                    <span className="text-zinc-600 dark:text-zinc-400">
+                                    <span className="text-muted-foreground">
                                         Total
                                     </span>
                                     <span className="text-lg font-semibold tabular-nums">
@@ -197,21 +197,27 @@ export default function OrderShow({
                                             >
                                                 Status
                                             </label>
-                                            <select
-                                                id="status"
-                                                name="status"
-                                                defaultValue={order.status}
-                                                className="h-9 rounded-md border border-zinc-200 bg-white px-3 text-sm text-zinc-950 ring-1 ring-zinc-950/5 outline-hidden transition-[color,box-shadow,border-color] focus-visible:border-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-400/40 dark:border-white/10 dark:bg-white/[0.04] dark:text-white dark:ring-white/10"
-                                            >
-                                                {statuses.map((status) => (
-                                                    <option
-                                                        key={status}
-                                                        value={status}
-                                                    >
-                                                        {formatStatus(status)}
-                                                    </option>
-                                                ))}
-                                            </select>
+                                            <div className="relative">
+                                                <select
+                                                    id="status"
+                                                    name="status"
+                                                    defaultValue={order.status}
+                                                    className="h-9 w-full appearance-none rounded-md border border-border bg-background pr-9 pl-3 text-sm text-foreground outline-hidden transition-[color,box-shadow,border-color] focus-visible:border-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-400/40"
+                                                >
+                                                    {statuses.map((status) => (
+                                                        <option
+                                                            key={status}
+                                                            value={status}
+                                                        >
+                                                            {formatStatus(status)}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                <ChevronDown
+                                                    aria-hidden="true"
+                                                    className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground"
+                                                />
+                                            </div>
                                             {errors.status && (
                                                 <p className="text-sm text-red-600 dark:text-red-300">
                                                     {errors.status}
@@ -232,20 +238,20 @@ export default function OrderShow({
                         </Card>
 
                         <Card>
-                            <CardHeader className="border-b border-zinc-950/5 pb-4 dark:border-white/10">
+                            <CardHeader className="border-b border-border pb-4">
                                 <CardTitle>Customer</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-3 text-sm">
                                 <div className="flex items-center gap-2">
-                                    <UserRound className="size-4 text-emerald-600 dark:text-emerald-300" />
+                                    <UserRound className="size-4 text-emerald-700 dark:text-emerald-300" />
                                     <span className="font-medium">
                                         {order.customer.name ?? 'Guest'}
                                     </span>
                                 </div>
-                                <p className="text-zinc-600 dark:text-zinc-400">
+                                <p className="text-muted-foreground">
                                     {order.customer.email ?? 'No email'}
                                 </p>
-                                <p className="text-zinc-600 dark:text-zinc-400">
+                                <p className="text-muted-foreground">
                                     {[
                                         order.customer.city,
                                         order.customer.state,

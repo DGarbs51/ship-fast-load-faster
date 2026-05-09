@@ -40,28 +40,25 @@ export default function CustomersIndex({
             <Head title="Customers" />
 
             <div className="flex h-full flex-1 flex-col gap-6 p-4 sm:p-6 lg:p-8">
-                <header className="flex flex-col gap-5 rounded-md bg-zinc-950 p-6 text-white ring-1 ring-zinc-950/10 sm:flex-row sm:items-center sm:justify-between md:p-8">
+                <header className="flex flex-col gap-5 rounded-md border border-border bg-card p-6 text-card-foreground sm:flex-row sm:items-center sm:justify-between md:p-8">
                     <div>
-                        <p className="flex items-center gap-2 text-sm font-medium text-emerald-300">
+                        <p className="flex items-center gap-2 text-sm font-medium text-emerald-700 dark:text-emerald-300">
                             <UsersRound className="size-4" />
                             Customer momentum
                         </p>
                         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-balance">
                             Customers
                         </h1>
-                        <p className="mt-2 max-w-[58ch] text-base text-pretty text-zinc-400 sm:text-sm">
+                        <p className="mt-2 max-w-[58ch] text-base text-pretty text-muted-foreground sm:text-sm">
                             Lifetime order counts, spend, and location.
                         </p>
                     </div>
                     <div className="flex flex-wrap items-center gap-3">
-                        <div className="inline-flex w-fit items-center gap-2 rounded-md bg-white/[0.06] px-3 py-2 text-sm font-medium text-zinc-200 ring-1 ring-white/10">
+                        <div className="inline-flex w-fit items-center gap-2 rounded-md border border-border bg-muted px-3 py-2 text-sm font-medium text-muted-foreground">
                             {formatNumber(customers.total)} customers
                         </div>
                         <Button asChild variant="outline">
-                            <a
-                                href={customersExport.url()}
-                                className="border-white/15 bg-white/[0.06] text-white hover:bg-white/10 hover:text-white"
-                            >
+                            <a href={customersExport.url()}>
                                 <Download className="size-4" />
                                 Export
                             </a>
@@ -73,7 +70,7 @@ export default function CustomersIndex({
                     <CardContent className="p-0">
                         <div className="overflow-x-auto">
                             <table className="w-full min-w-[820px] text-sm">
-                                <thead className="border-b border-zinc-950/10 bg-zinc-950 text-left text-zinc-300 dark:border-white/10">
+                                <thead className="border-b border-border bg-muted text-left text-muted-foreground">
                                     <tr>
                                         <th className="px-6 py-3 font-medium">
                                             Customer
@@ -102,11 +99,11 @@ export default function CustomersIndex({
                                                 <p className="font-medium">
                                                     {customer.name}
                                                 </p>
-                                                <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                                                <p className="text-sm text-muted-foreground">
                                                     {customer.email}
                                                 </p>
                                             </td>
-                                            <td className="px-6 py-4 text-zinc-600 dark:text-zinc-400">
+                                            <td className="px-6 py-4 text-muted-foreground">
                                                 {[
                                                     customer.city,
                                                     customer.state,
@@ -125,7 +122,7 @@ export default function CustomersIndex({
                                                     customer.total_spend,
                                                 )}
                                             </td>
-                                            <td className="px-6 py-4 text-zinc-600 dark:text-zinc-400">
+                                            <td className="px-6 py-4 text-muted-foreground">
                                                 {formatDate(
                                                     customer.created_at,
                                                 )}
@@ -139,7 +136,7 @@ export default function CustomersIndex({
                 </Card>
 
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                    <p className="text-sm text-muted-foreground">
                         Showing {formatNumber(customers.from)}-
                         {formatNumber(customers.to)} of{' '}
                         {formatNumber(customers.total)}

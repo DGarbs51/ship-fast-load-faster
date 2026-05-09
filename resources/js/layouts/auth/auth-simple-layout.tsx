@@ -9,16 +9,16 @@ export default function AuthSimpleLayout({
     description,
 }: AuthLayoutProps) {
     return (
-        <div className="isolate flex min-h-svh flex-col items-center justify-center bg-zinc-950 p-6 text-white antialiased md:p-10">
+        <div className="isolate flex min-h-svh flex-col items-center justify-center bg-background p-6 text-foreground antialiased md:p-10">
             <div className="w-full max-w-sm">
-                <div className="overflow-hidden rounded-md bg-white/10 p-2 shadow-2xl ring-1 shadow-black/25 ring-white/15">
-                    <div className="flex flex-col gap-8 rounded-md bg-zinc-950 p-6 ring-1 ring-white/10 sm:p-8">
+                <div className="overflow-hidden rounded-md bg-muted p-2 shadow-2xl shadow-black/10 dark:shadow-none">
+                    <div className="flex flex-col gap-8 rounded-md border border-border bg-card p-6 sm:p-8">
                         <div className="flex flex-col items-center gap-4">
                             <Link
                                 href={home()}
                                 className="flex flex-col items-center gap-3 font-medium"
                             >
-                                <span className="flex size-9 items-center justify-center rounded-md bg-white text-zinc-950">
+                                <span className="flex size-9 items-center justify-center rounded-md bg-foreground text-background">
                                     <AppLogoIcon className="size-5 fill-current" />
                                 </span>
                                 <span className="sr-only">{title}</span>
@@ -28,17 +28,15 @@ export default function AuthSimpleLayout({
                                 <h1 className="text-2xl font-semibold tracking-tight text-balance">
                                     {title}
                                 </h1>
-                                <p className="text-base text-pretty text-zinc-400 sm:text-sm">
+                                <p className="text-base text-pretty text-muted-foreground sm:text-sm">
                                     {description}
                                 </p>
                             </div>
                         </div>
-                        <div className="[&_.text-muted-foreground]:text-zinc-400 [&_input]:border-white/10 [&_input]:bg-white/[0.06] [&_input]:text-white [&_input]:ring-white/10 [&_label]:text-zinc-200">
-                            {children}
-                        </div>
+                        <div>{children}</div>
                     </div>
                 </div>
-                <div className="mt-6 text-center text-sm text-zinc-500">
+                <div className="mt-6 text-center text-sm text-muted-foreground">
                     Commerce operations for faster fulfillment
                 </div>
             </div>

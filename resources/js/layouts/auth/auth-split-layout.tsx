@@ -11,15 +11,15 @@ export default function AuthSplitLayout({
     const { name } = usePage().props;
 
     return (
-        <div className="relative grid h-dvh flex-col items-center justify-center bg-zinc-950 px-8 text-white antialiased sm:px-0 lg:max-w-none lg:grid-cols-2 lg:px-0">
-            <div className="relative hidden h-full flex-col p-10 text-white lg:flex">
-                <div className="absolute inset-0 bg-zinc-950" />
-                <div className="absolute inset-6 rounded-md bg-white/[0.04] ring-1 ring-white/10" />
+        <div className="relative grid h-dvh flex-col items-center justify-center bg-background px-8 text-foreground antialiased sm:px-0 lg:max-w-none lg:grid-cols-2 lg:px-0">
+            <div className="relative hidden h-full flex-col p-10 lg:flex">
+                <div className="absolute inset-0 bg-muted" />
+                <div className="absolute inset-6 rounded-md border border-border bg-card" />
                 <Link
                     href={home()}
                     className="relative z-20 flex items-center text-lg font-medium"
                 >
-                    <span className="mr-3 flex size-9 items-center justify-center rounded-md bg-white text-zinc-950">
+                    <span className="mr-3 flex size-9 items-center justify-center rounded-md bg-foreground text-background">
                         <AppLogoIcon className="size-5 fill-current" />
                     </span>
                     {name}
@@ -31,7 +31,7 @@ export default function AuthSplitLayout({
                         href={home()}
                         className="relative z-20 flex items-center justify-center lg:hidden"
                     >
-                        <span className="flex size-10 items-center justify-center rounded-md bg-white text-zinc-950">
+                        <span className="flex size-10 items-center justify-center rounded-md bg-foreground text-background">
                             <AppLogoIcon className="size-5 fill-current" />
                         </span>
                     </Link>
@@ -39,13 +39,11 @@ export default function AuthSplitLayout({
                         <h1 className="text-2xl font-semibold tracking-tight">
                             {title}
                         </h1>
-                        <p className="text-base text-balance text-zinc-400 sm:text-sm">
+                        <p className="text-base text-balance text-muted-foreground sm:text-sm">
                             {description}
                         </p>
                     </div>
-                    <div className="[&_.text-muted-foreground]:text-zinc-400 [&_input]:border-white/10 [&_input]:bg-white/[0.06] [&_input]:text-white [&_input]:ring-white/10 [&_label]:text-zinc-200">
-                        {children}
-                    </div>
+                    <div>{children}</div>
                 </div>
             </div>
         </div>
