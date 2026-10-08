@@ -5,13 +5,18 @@ namespace App\Observers;
 use App\Services\DashboardStats;
 
 /**
- * Exercise 2.2: registered now; paste saved() and deleted() to enable invalidation.
- *
- * @see DashboardStats::flush()
+ * Any write to a model the dashboard aggregates invalidates every dashboard key.
+ * Note: query-builder mass updates (`Order::where(...)->update()`) skip observers.
  */
 class DashboardCacheObserver
 {
-    public function saved(): void {}
+    public function saved(): void
+    {
+        DashboardStats::flush();
+    }
 
-    public function deleted(): void {}
+    public function deleted(): void
+    {
+        DashboardStats::flush();
+    }
 }

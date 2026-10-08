@@ -15,16 +15,18 @@ use Illuminate\Support\Str;
 class DashboardStats
 {
     /**
-     * Exercise 2.2: keep the extraction uncached until remember() is pasted.
-     *
-     * @see Cache::remember()
-     * @see Str::ulid()
+     * Replacing this token orphans every dashboard key at once. The database
+     * cache store has no tags, so a versioned key prefix does the same job.
+     * A fresh random token (not a counter) means a flush is one atomic write.
      */
     public const string VERSION_KEY = 'dashboard:version';
 
     private const int TTL_SECONDS = 600;
 
-    public static function flush(): void {}
+    public static function flush(): void
+    {
+        Cache::forever(self::VERSION_KEY, Str::ulid()->toString());
+    }
 
     /**
      * @return array{total_revenue_this_month: float, total_orders_this_month: int, pending_orders: int, average_order_value: float|int, low_stock_products: int, new_customers_this_month: int}
@@ -166,6 +168,8 @@ class DashboardStats
      */
     private function remember(string $key, Closure $callback): mixed
     {
-        return $callback();
+        $version = Cache::get(self::VERSION_KEY, 'initial');
+
+        return Cache::remember("dashboard:v{$version}:{$key}", self::TTL_SECONDS, $callback);
     }
 }
