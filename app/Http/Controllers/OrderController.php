@@ -14,17 +14,17 @@ class OrderController extends Controller
 {
     public function index(): Response
     {
-        $orders = Order::latest()
+        $orders = Order::with('customer:id,name')
+            ->withCount('items')
+            ->latest()
             ->paginate(25)
             ->withQueryString()
             ->through(function (Order $order): array {
-                $items = $order->items;
-
                 return [
                     'id' => $order->id,
                     'number' => $order->number,
                     'customer' => $order->customer?->name,
-                    'item_count' => $items->count(),
+                    'item_count' => $order->items_count,
                     'total' => (float) $order->total,
                     'status' => $order->status,
                     'created_at' => $order->created_at?->toISOString(),
@@ -38,6 +38,8 @@ class OrderController extends Controller
 
     public function show(Order $order): Response
     {
+        $order->load(['customer', 'items.product:id,name,sku']);
+
         return Inertia::render('orders/show', [
             'order' => [
                 'id' => $order->id,

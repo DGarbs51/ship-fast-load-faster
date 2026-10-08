@@ -19,6 +19,7 @@ type Customer = {
     country: string;
     order_count: number;
     total_spend: number;
+    last_order_at: string | null;
     created_at: string | null;
 };
 
@@ -85,6 +86,9 @@ export default function CustomersIndex({
                                             Total spend
                                         </th>
                                         <th className="px-6 py-3 font-medium">
+                                            Last order
+                                        </th>
+                                        <th className="px-6 py-3 font-medium">
                                             Joined
                                         </th>
                                     </tr>
@@ -120,6 +124,11 @@ export default function CustomersIndex({
                                             <td className="px-6 py-4 text-right font-medium">
                                                 {formatCurrency(
                                                     customer.total_spend,
+                                                )}
+                                            </td>
+                                            <td className="px-6 py-4 text-muted-foreground">
+                                                {formatDate(
+                                                    customer.last_order_at,
                                                 )}
                                             </td>
                                             <td className="px-6 py-4 text-muted-foreground">
