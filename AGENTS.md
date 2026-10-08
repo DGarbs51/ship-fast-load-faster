@@ -15,11 +15,13 @@ Framework-specific rules live in `.claude/rules/` and auto-load by file pattern 
 
 ## Commands
 
-The site is served by Laravel Herd at `https://ship-fast-load-faster.test` — never run `php artisan serve`. Use the Boost `get-absolute-url` tool when generating project URLs.
+This is a workshop app that many attendees run on their own laptops. It must work with the minimal setup only: `php artisan serve` (http://127.0.0.1:8000) plus `npm run dev`, SQLite for the database, cache, and queue. Do not assume Herd, Valet, Sail, Docker, Redis, or any other service. From checkpoint 04 on, queued jobs also need `php artisan queue:work` in a third terminal.
 
 ```bash
-composer run dev          # concurrently runs: artisan serve, queue:listen, vite
-npm run dev               # vite only (Herd serves PHP)
+php artisan serve         # app at http://127.0.0.1:8000
+npm run dev               # vite
+php artisan queue:work    # queued jobs (checkpoint 04+)
+composer run dev          # all three at once (serve, queue:listen, vite)
 npm run build             # production bundle
 npm run build:ssr         # SSR bundle (build + ssr build)
 
