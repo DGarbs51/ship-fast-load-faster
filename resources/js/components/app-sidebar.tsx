@@ -1,5 +1,11 @@
 import { Link } from '@inertiajs/react';
-import { Boxes, LayoutGrid, ShoppingCart, UsersRound } from 'lucide-react';
+import {
+    Boxes,
+    LayoutGrid,
+    ShoppingCart,
+    Sparkles,
+    UsersRound,
+} from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -12,7 +18,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
+import { advisor, dashboard } from '@/routes';
 import { index as customersIndex } from '@/routes/customers';
 import { index as ordersIndex } from '@/routes/orders';
 import { index as productsIndex } from '@/routes/products';
@@ -38,6 +44,11 @@ const mainNavItems: NavItem[] = [
         title: 'Customers',
         href: customersIndex(),
         icon: UsersRound,
+    },
+    {
+        title: 'Advisor',
+        href: advisor(),
+        icon: Sparkles,
     },
 ];
 

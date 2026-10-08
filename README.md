@@ -1,5 +1,5 @@
-> **You are on `checkpoint/06-octane` — Act 3.3 "Octane — a glimpse".**
-> To be here from scratch: follow Setup below, then `git stash --include-untracked`, `git switch checkpoint/06-octane`, `composer install && npm install`, `php artisan migrate`, `php artisan cache:clear`, and `php artisan workshop:doctor`. Start the servers under Run and rerun doctor. Then: `php artisan queue:work` in a third terminal; keep `php artisan serve` locally for the on-screen Octane demo.
+> **You are on `checkpoint/07-ai-agent` — Act 4.1 "The Laravel AI SDK" (includes Act 4.2 tools and structured output).**
+> To be here from scratch: follow Setup below, then `git stash --include-untracked`, `git switch checkpoint/07-ai-agent`, `composer install && npm install`, `php artisan migrate`, `php artisan cache:clear`, and `php artisan workshop:doctor`. Start the servers under Run and rerun doctor. Then: `php artisan queue:work` in a third terminal. Real advisor requests need your own provider key and can incur charges.
 
 # Ship Fast, Load Faster
 
