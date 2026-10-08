@@ -21,7 +21,12 @@ class DashboardStats
      */
     public const string VERSION_KEY = 'dashboard:version';
 
-    private const int TTL_SECONDS = 600;
+    /**
+     * Serve from cache for 5 minutes; for the next 10 serve the stale value and refresh after the response.
+     */
+    private const array FRESH_THEN_STALE_SECONDS = [300, 900];
+
+    private const int REBUILD_LOCK_SECONDS = 30;
 
     public static function flush(): void
     {
@@ -161,6 +166,8 @@ class DashboardStats
     }
 
     /**
+     * Stale-while-revalidate for expiry, plus a lock so only one request rebuilds a cold key.
+     *
      * @template TValue
      *
      * @param  Closure(): TValue  $callback
@@ -169,7 +176,16 @@ class DashboardStats
     private function remember(string $key, Closure $callback): mixed
     {
         $version = Cache::get(self::VERSION_KEY, 'initial');
+        $key = "dashboard:v{$version}:{$key}";
 
-        return Cache::remember("dashboard:v{$version}:{$key}", self::TTL_SECONDS, $callback);
+        if (Cache::missing($key)) {
+            // One request rebuilds; the rest wait, then read what it stored. Waiting as long as the
+            // lock lives means a timeout only surfaces when a rebuild outlives the lock itself, which
+            // is a bug to fix (move the work to a queue), not a reason to stampede.
+            return Cache::lock("{$key}:rebuild", self::REBUILD_LOCK_SECONDS)
+                ->block(self::REBUILD_LOCK_SECONDS, fn () => Cache::flexible($key, self::FRESH_THEN_STALE_SECONDS, $callback));
+        }
+
+        return Cache::flexible($key, self::FRESH_THEN_STALE_SECONDS, $callback);
     }
 }

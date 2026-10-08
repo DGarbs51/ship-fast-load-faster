@@ -39,12 +39,14 @@ class CustomerController extends Controller
 
     public function export(): StreamedResponse
     {
-        $customers = Customer::withCount('orders')->withSum('orders', 'total')->get();
-
-        return response()->streamDownload(function () use ($customers): void {
+        return response()->streamDownload(function (): void {
             $output = fopen('php://output', 'w');
 
             fputcsv($output, ['Name', 'Email', 'Location', 'Orders', 'Total spend']);
+
+            $customers = Customer::withCount('orders')
+                ->withSum('orders', 'total')
+                ->lazy(1000);
 
             foreach ($customers as $customer) {
                 fputcsv($output, [
