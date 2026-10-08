@@ -1,5 +1,5 @@
-> **You are on `checkpoint/01-diagnose` — Act 1.3 "Diagnostic exercise".**
-> To be here from scratch: follow Setup below, then `git stash --include-untracked`, `git switch checkpoint/01-diagnose`, `composer install && npm install`, `php artisan migrate`, `php artisan cache:clear`, and `php artisan workshop:doctor`. Start the servers under Run and rerun doctor. Then: `php artisan workshop:bench`.
+> **You are on `checkpoint/02-queries` — Act 2.1 "Query layer".**
+> To be here from scratch: follow Setup below, then `git stash --include-untracked`, `git switch checkpoint/02-queries`, `composer install && npm install`, `php artisan migrate`, `php artisan cache:clear`, and `php artisan workshop:doctor`. Start the servers under Run and rerun doctor. Then: `php artisan workshop:bench`.
 
 # Ship Fast, Load Faster
 
