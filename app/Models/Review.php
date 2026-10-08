@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use App\Observers\DashboardCacheObserver;
 use Database\Factories\ReviewFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable(['product_id', 'customer_id', 'rating', 'title', 'body'])]
+#[ObservedBy(DashboardCacheObserver::class)]
 class Review extends Model
 {
     /** @use HasFactory<ReviewFactory> */
