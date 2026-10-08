@@ -5,6 +5,7 @@ namespace App\Ai\Tools;
 use App\Models\Product;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Cache;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
 use Stringable;
@@ -31,6 +32,18 @@ class SearchProducts implements Tool
      * @return list<array{id: int, name: string, category: string|null, price: float, stock_count: int, units_sold: int, average_rating: float}>
      */
     public function search(string $query, ?string $category = null, int|float|null $maxPrice = null): array
+    {
+        $key = 'ai:tool:search-products:'.hash('xxh128', json_encode([mb_strtolower($query), mb_strtolower((string) $category), $maxPrice]));
+
+        // Tool results are plain catalog data, so they are almost always safe to cache.
+        // The model calls the same search for many different questions.
+        return Cache::flexible($key, [300, 900], fn (): array => $this->query($query, $category, $maxPrice));
+    }
+
+    /**
+     * @return list<array{id: int, name: string, category: string|null, price: float, stock_count: int, units_sold: int, average_rating: float}>
+     */
+    private function query(string $query, ?string $category, int|float|null $maxPrice): array
     {
         return Product::query()
             ->with('category:id,name')

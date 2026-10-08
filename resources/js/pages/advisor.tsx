@@ -1,10 +1,12 @@
-import { Form, Head, Link } from '@inertiajs/react';
+import { Form, Head, Link, usePoll } from '@inertiajs/react';
 import { Sparkles } from 'lucide-react';
+import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { formatNumber } from '@/lib/formatters';
 import { advisor } from '@/routes';
+import { deepAnalysis as startDeepAnalysis } from '@/routes/advisor';
 import { show as productShow } from '@/routes/products';
 
 type Recommendation = {
@@ -13,22 +15,79 @@ type Recommendation = {
     reason: string;
 };
 
-type Answer =
-    | {
-          recommendations: Recommendation[];
-          confidence: number;
-          reasoning: string;
-          tokens: number;
-      }
-    | { error: string };
+type Result = {
+    recommendations: Recommendation[];
+    confidence: number;
+    reasoning: string;
+    tokens: number;
+    cached?: boolean;
+};
+
+type Answer = Result | { error: string };
+
+function ResultCard({ result }: { result: Result }) {
+    return (
+        <Card>
+            <CardContent className="flex flex-col gap-4">
+                <p className="text-sm text-muted-foreground">
+                    {result.reasoning}
+                </p>
+                <ul className="flex flex-col gap-3">
+                    {result.recommendations.map((recommendation) => (
+                        <li
+                            key={recommendation.product_id}
+                            className="rounded-md border border-border p-4"
+                        >
+                            <Link
+                                href={productShow(recommendation.product_id)}
+                                className="font-medium hover:underline"
+                                prefetch
+                            >
+                                {recommendation.name}
+                            </Link>
+                            <p className="mt-1 text-sm text-muted-foreground">
+                                {recommendation.reason}
+                            </p>
+                        </li>
+                    ))}
+                </ul>
+                <p className="text-xs text-muted-foreground">
+                    Confidence {Math.round(result.confidence * 100)}% ·{' '}
+                    {formatNumber(result.tokens)} tokens
+                    {result.cached && ' · served from cache (0 new tokens)'}
+                </p>
+            </CardContent>
+        </Card>
+    );
+}
 
 export default function Advisor({
     question,
     answer,
+    deepAnalysis,
+    deepAnalysisPending,
 }: {
     question: string | null;
     answer: Answer | null;
+    deepAnalysis: Answer | null;
+    deepAnalysisPending: boolean;
 }) {
+    const { start, stop } = usePoll(
+        3000,
+        { only: ['deepAnalysis', 'deepAnalysisPending'] },
+        { autoStart: false },
+    );
+
+    useEffect(() => {
+        if (deepAnalysisPending) {
+            start();
+        } else {
+            stop();
+        }
+
+        return stop;
+    }, [deepAnalysisPending, start, stop]);
+
     return (
         <>
             <Head title="Product advisor" />
@@ -77,40 +136,48 @@ export default function Advisor({
                 )}
 
                 {answer && 'recommendations' in answer && (
-                    <Card>
-                        <CardContent className="flex flex-col gap-4">
-                            <p className="text-sm text-muted-foreground">
-                                {answer.reasoning}
+                    <ResultCard result={answer} />
+                )}
+
+                {question && (
+                    <section className="flex flex-col gap-3">
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                            <h2 className="text-lg font-semibold">
+                                Deep analysis
+                            </h2>
+                            {!deepAnalysis && (
+                                <Form
+                                    action={startDeepAnalysis()}
+                                    transform={(data) => ({
+                                        ...data,
+                                        question,
+                                    })}
+                                    disableWhileProcessing
+                                >
+                                    <Button
+                                        type="submit"
+                                        variant="outline"
+                                        disabled={deepAnalysisPending}
+                                    >
+                                        {deepAnalysisPending
+                                            ? 'Running on the queue…'
+                                            : 'Run deep analysis'}
+                                    </Button>
+                                </Form>
+                            )}
+                        </div>
+                        {deepAnalysisPending && (
+                            <div className="h-24 animate-pulse rounded-md bg-muted" />
+                        )}
+                        {deepAnalysis && 'error' in deepAnalysis && (
+                            <p className="text-sm text-destructive">
+                                {deepAnalysis.error}
                             </p>
-                            <ul className="flex flex-col gap-3">
-                                {answer.recommendations.map(
-                                    (recommendation) => (
-                                        <li
-                                            key={recommendation.product_id}
-                                            className="rounded-md border border-border p-4"
-                                        >
-                                            <Link
-                                                href={productShow(
-                                                    recommendation.product_id,
-                                                )}
-                                                className="font-medium hover:underline"
-                                                prefetch
-                                            >
-                                                {recommendation.name}
-                                            </Link>
-                                            <p className="mt-1 text-sm text-muted-foreground">
-                                                {recommendation.reason}
-                                            </p>
-                                        </li>
-                                    ),
-                                )}
-                            </ul>
-                            <p className="text-xs text-muted-foreground">
-                                Confidence {Math.round(answer.confidence * 100)}
-                                % · {formatNumber(answer.tokens)} tokens
-                            </p>
-                        </CardContent>
-                    </Card>
+                        )}
+                        {deepAnalysis && 'recommendations' in deepAnalysis && (
+                            <ResultCard result={deepAnalysis} />
+                        )}
+                    </section>
                 )}
             </div>
         </>
