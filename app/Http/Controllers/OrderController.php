@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Notifications\OrderConfirmation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -82,16 +83,9 @@ class OrderController extends Controller
         ]);
 
         if ($previousStatus !== $order->status && in_array($order->status, ['paid', 'shipped'], true)) {
-            $this->sendOrderConfirmation($order);
+            $order->customer?->notify(new OrderConfirmation($order));
         }
 
         return back();
-    }
-
-    private function sendOrderConfirmation(Order $order): void
-    {
-        $order->customer?->email;
-
-        usleep(300000);
     }
 }
