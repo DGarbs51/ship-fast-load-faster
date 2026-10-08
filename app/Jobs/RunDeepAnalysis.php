@@ -25,12 +25,19 @@ class RunDeepAnalysis implements ShouldBeUnique, ShouldQueue
         return AdvisorCache::hash($this->question);
     }
 
-    /**
-     * Exercise 4.3: paste handle() here. No request dispatches this job until checkpoint 08.
-     *
-     * @see DeepProductAnalyst
-     */
-    public function handle(): void {}
+    public function handle(): void
+    {
+        $response = (new DeepProductAnalyst)->prompt($this->question);
+
+        Cache::put(AdvisorCache::deepAnalysis($this->question), [
+            'recommendations' => $response['recommendations'],
+            'confidence' => (float) $response['confidence'],
+            'reasoning' => $response['reasoning'],
+            'tokens' => $response->usage->inputTokens + $response->usage->outputTokens,
+        ], now()->addDay());
+
+        Cache::forget(AdvisorCache::deepAnalysisPending($this->question));
+    }
 
     public function failed(?Throwable $exception): void
     {
