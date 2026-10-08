@@ -237,7 +237,7 @@ it('shows validation errors', function () {
 
 **Run**: `php artisan serve & npx playwright install chromium` (first time), `./vendor/bin/pest --group=browser`
 
-**Base URL**: `APP_URL` in `.env` (Herd: `.test` domains, else `localhost:8000`)
+**Base URL**: `APP_URL` in `.env` (`http://127.0.0.1:8000` from `php artisan serve`)
 
 ### API Development
 
