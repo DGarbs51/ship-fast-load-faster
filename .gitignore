@@ -29,3 +29,7 @@ yarn-error.log
 /.zed
 bun.lock
 bun.lockb
+
+**/caddy
+frankenphp
+frankenphp-worker.php

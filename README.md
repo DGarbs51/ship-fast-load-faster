@@ -1,5 +1,5 @@
-> **You are on `checkpoint/05-stampede` — Act 3.1 "Stampede protection and locks" (includes Act 3.2 lazy exports).**
-> To be here from scratch: follow Setup below, then `git stash --include-untracked`, `git switch checkpoint/05-stampede`, `composer install && npm install`, `php artisan migrate`, `php artisan cache:clear`, and `php artisan workshop:doctor`. Start the servers under Run and rerun doctor. Then: `php artisan queue:work` in a third terminal.
+> **You are on `checkpoint/06-octane` — Act 3.3 "Octane — a glimpse".**
+> To be here from scratch: follow Setup below, then `git stash --include-untracked`, `git switch checkpoint/06-octane`, `composer install && npm install`, `php artisan migrate`, `php artisan cache:clear`, and `php artisan workshop:doctor`. Start the servers under Run and rerun doctor. Then: `php artisan queue:work` in a third terminal; keep `php artisan serve` locally for the on-screen Octane demo.
 
 # Ship Fast, Load Faster
 
