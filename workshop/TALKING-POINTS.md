@@ -8,6 +8,24 @@ Companion to [`ship-fast-load-faster-outline.md`](../ship-fast-load-faster-outli
 
 ---
 
+## Setup assumptions
+
+Every attendee runs the **minimal setup**: SQLite for the database, cache, and queue, plus two terminals:
+
+```bash
+php artisan serve      # http://127.0.0.1:8000
+npm run dev
+```
+
+From Act 2.3 (checkpoint 04) on, add a **third terminal**: `php artisan queue:work`. Starting the worker is part of the lesson. No Herd, Valet, Sail, Docker, or Redis is needed at any point. Octane (3.3) is a facilitator demo only.
+
+Two quirks of `php artisan serve` worth knowing as facilitator:
+
+- **It handles one request at a time** by default. Prefetching, polling, and a second tab all queue behind each other. That's fine for one person, but don't use the built-in server to demonstrate concurrency. The stampede demo spawns its own processes instead (see 3.1).
+- **`defer()` does not run after the response.** The built-in server has no `fastcgi_finish_request()`, so deferred callbacks run *before* the connection closes, and the browser waits for them. Measured on the facilitator laptop: a route with `defer(fn () => sleep(2))` took 2.16 s on `artisan serve`. This matters for `Cache::flexible` (3.1).
+
+---
+
 ## How checkpoints work
 
 Every segment ends on a branch. Each branch builds on the one before it, so an attendee who falls behind can jump to any of them.
@@ -18,7 +36,7 @@ Every segment ends on a branch. Each branch builds on the one before it, so an a
 | `checkpoint/01-diagnose` | 1.2 – 1.3 | `workshop:bench` command, slow-query log, findings template |
 | `checkpoint/02-queries` | 2.1 | Indexes, eager loading, DB-side aggregates, subquery select, lazy-loading guard |
 | `checkpoint/03-cache` | 2.2 | `DashboardStats` service, `Cache::remember`, versioned keys, observer invalidation |
-| `checkpoint/04-queues` | 2.3 | Queued unique rollup job + schedule, queued order confirmation, `workshop:stampede` demo |
+| `checkpoint/04-queues` | 2.3 | Queued unique rollup job dispatched when stale, queued order confirmation, `workshop:stampede` demo (start `php artisan queue:work` from here on) |
 | `checkpoint/05-stampede` | 3.1 – 3.2 | `Cache::flexible` + rebuild lock, `lazy()` CSV export |
 | `checkpoint/06-octane` | 3.3 | Octane (FrankenPHP), scoped-binding fix for a per-request state leak |
 | `checkpoint/07-ai-agent` | 4.1 – 4.2 | `laravel/ai` `ProductAdvisor` agent, `SearchProducts` tool, structured output, `/advisor` page |
@@ -28,7 +46,7 @@ To catch up, attendees run:
 
 ```bash
 git switch checkpoint/03-cache      # any checkpoint
-composer install && npm install     # 06 adds laravel/octane, 07 adds laravel/ai
+composer install && npm install     # 06 adds laravel/octane, 07 adds laravel/ai (no binaries; Octane's server is only downloaded if you run octane:install)
 php artisan migrate                 # 02 adds the index migration
 npm run build                       # or keep `npm run dev` running
 php artisan cache:clear
@@ -187,7 +205,7 @@ top products (subquery)          SCAN + SCAN               → SEARCH order_item
 - **`Cache::remember()` fundamentals**: [`app/Services/DashboardStats.php:173`](https://github.com/DGarbs51/ship-fast-load-faster/blob/checkpoint/03-cache/app/Services/DashboardStats.php#L173). Talk through the cache-aside flow: read the key → on a miss, run the closure → store → return.
   - Cache **arrays, not models or collections**. Every section ends with `->all()` ([`app/Services/DashboardStats.php:96`](https://github.com/DGarbs51/ship-fast-load-faster/blob/checkpoint/03-cache/app/Services/DashboardStats.php#L96)). Laravel 13 sets `cache.serializable_classes => false` by default ([`config/cache.php:128`](https://github.com/DGarbs51/ship-fast-load-faster/blob/checkpoint/03-cache/config/cache.php#L128)), so cached PHP objects won't unserialize. That's a deliberate security default against deserialization attacks.
 - **SQLite cache driver:** `CACHE_STORE=database` on SQLite. It's one indexed primary-key lookup per `get`, so it's very fast for a single box.
-  - Gotcha to show in Debugbar: **each cache read is itself a query** (the `cache` table). The warm dashboard still shows ~15 queries, which are session, auth, and cache reads. Fewer and cheaper, but not zero.
+  - Gotcha to show in Debugbar: **each cache read is itself a query** (the `cache` table). The warm dashboard still shows 15–20 queries, which are session, auth, and cache reads. All are primary-key lookups totalling ~1.5 ms, but not zero. On Redis those would be network round-trips instead, so they still aren't free.
 - **Cache tags vs. key prefixes:**
   - Tags (`Cache::tags(['dashboard'])->flush()`) **aren't supported** by the `database`, `file`, or `dynamodb` stores, only Redis/Memcached/array.
   - Our portable alternative is a **versioned key prefix** ([`app/Services/DashboardStats.php:22`](https://github.com/DGarbs51/ship-fast-load-faster/blob/checkpoint/03-cache/app/Services/DashboardStats.php#L22)). Every key looks like `dashboard:v{token}:metrics`, and invalidation writes a fresh random ULID as the token ([`app/Services/DashboardStats.php:28`](https://github.com/DGarbs51/ship-fast-load-faster/blob/checkpoint/03-cache/app/Services/DashboardStats.php#L28)). Old keys are orphaned and expire on their own TTL.
@@ -212,16 +230,18 @@ top products (subquery)          SCAN + SCAN               → SEARCH order_item
 
 - The mindset: *"Does the user need the result of this before we respond?"* If not, it doesn't belong in the request.
 - **Analytics rollup → queued job:**
-  - Removed from the controller ([`app/Http/Controllers/DashboardController.php:11`](https://github.com/DGarbs51/ship-fast-load-faster/blob/checkpoint/04-queues/app/Http/Controllers/DashboardController.php#L11) no longer calls it).
-  - New job: [`app/Jobs/RefreshAnalyticsRollup.php:15`](https://github.com/DGarbs51/ship-fast-load-faster/blob/checkpoint/04-queues/app/Jobs/RefreshAnalyticsRollup.php#L15). It also aggregates in SQL ([`app/Jobs/RefreshAnalyticsRollup.php:26`](https://github.com/DGarbs51/ship-fast-load-faster/blob/checkpoint/04-queues/app/Jobs/RefreshAnalyticsRollup.php#L26)) and stores the result with `Cache::forever`.
+  - Removed from the controller ([`app/Http/Controllers/DashboardController.php:12`](https://github.com/DGarbs51/ship-fast-load-faster/blob/checkpoint/04-queues/app/Http/Controllers/DashboardController.php#L12) no longer calls it).
+  - New job: [`app/Jobs/RefreshAnalyticsRollup.php:16`](https://github.com/DGarbs51/ship-fast-load-faster/blob/checkpoint/04-queues/app/Jobs/RefreshAnalyticsRollup.php#L16). It also aggregates in SQL ([`app/Jobs/RefreshAnalyticsRollup.php:42`](https://github.com/DGarbs51/ship-fast-load-faster/blob/checkpoint/04-queues/app/Jobs/RefreshAnalyticsRollup.php#L42)) and stores the result with `Cache::forever`.
   - `ShouldBeUnique` means a burst of dispatches can't pile up duplicate jobs (it uses an atomic cache lock).
-  - Scheduled every five minutes in [`routes/console.php:12`](https://github.com/DGarbs51/ship-fast-load-faster/blob/checkpoint/04-queues/routes/console.php#L12). Run it with `php artisan schedule:work` (Solo's *Scheduler* process).
+  - The dashboard **dispatches it when the rollup is missing or more than 5 minutes old**: [`app/Jobs/RefreshAnalyticsRollup.php:28`](https://github.com/DGarbs51/ship-fast-load-faster/blob/checkpoint/04-queues/app/Jobs/RefreshAnalyticsRollup.php#L28), called from [`app/Http/Controllers/DashboardController.php:14`](https://github.com/DGarbs51/ship-fast-load-faster/blob/checkpoint/04-queues/app/Http/Controllers/DashboardController.php#L14). Dispatching is one cheap insert into the `jobs` table; the slow work happens in `queue:work`.
+  - `ShouldBeUnique` keeps a single job pending even if hundreds of dashboard hits arrive while the worker is behind or stopped. Show this live: stop the worker, refresh the dashboard ten times, and `select count(*) from jobs` still shows 1.
+  - In production you'd usually *also* schedule it (`Schedule::job(...)->everyFiveMinutes()`). We skip that here because it needs a fourth process (`schedule:work`), and dispatch-when-stale keeps the setup minimal.
 - **Order confirmation → queued notification:**
   - The 300 ms `usleep` "email" ([`app/Http/Controllers/OrderController.php:93`](https://github.com/DGarbs51/ship-fast-load-faster/blob/main/app/Http/Controllers/OrderController.php#L93)) becomes `$order->customer?->notify(new OrderConfirmation($order))` ([`app/Http/Controllers/OrderController.php:86`](https://github.com/DGarbs51/ship-fast-load-faster/blob/checkpoint/04-queues/app/Http/Controllers/OrderController.php#L86)).
   - The notification `implements ShouldQueue` and calls `afterCommit()` ([`app/Notifications/OrderConfirmation.php:27`](https://github.com/DGarbs51/ship-fast-load-faster/blob/checkpoint/04-queues/app/Notifications/OrderConfirmation.php#L27)), so it is only dispatched once the DB transaction commits. Otherwise the worker could pick it up before the order change is visible.
-  - It **snapshots** the order number and status in the constructor ([`app/Notifications/OrderConfirmation.php:26`](https://github.com/DGarbs51/ship-fast-load-faster/blob/checkpoint/04-queues/app/Notifications/OrderConfirmation.php#L26)). Queued jobs serialize models as IDs and re-fetch them when they run. If the order goes paid → shipped before the worker catches up, a notification that read `$order->status` at send time would say "shipped" twice. Test: [`tests/Feature/AsyncWorkTest.php:53`](https://github.com/DGarbs51/ship-fast-load-faster/blob/checkpoint/04-queues/tests/Feature/AsyncWorkTest.php#L53).
+  - It **snapshots** the order number and status in the constructor ([`app/Notifications/OrderConfirmation.php:26`](https://github.com/DGarbs51/ship-fast-load-faster/blob/checkpoint/04-queues/app/Notifications/OrderConfirmation.php#L26)). Queued jobs serialize models as IDs and re-fetch them when they run. If the order goes paid → shipped before the worker catches up, a notification that read `$order->status` at send time would say "shipped" twice. Test: [`tests/Feature/AsyncWorkTest.php:73`](https://github.com/DGarbs51/ship-fast-load-faster/blob/checkpoint/04-queues/tests/Feature/AsyncWorkTest.php#L73).
   - `Customer` gets the `Notifiable` trait ([`app/Models/Customer.php:21`](https://github.com/DGarbs51/ship-fast-load-faster/blob/checkpoint/04-queues/app/Models/Customer.php#L21)).
-- **Queue drivers:** `QUEUE_CONNECTION=database` on SQLite works fine for a workshop and for many small production apps. Run `php artisan queue:work` (Solo's *Queue* process). Move to Redis/SQS when you need many workers, high throughput, or delayed jobs at scale.
+- **Queue drivers:** `QUEUE_CONNECTION=database` on SQLite works fine for a workshop and for many small production apps. Attendees start `php artisan queue:work` in a third terminal now and keep it running for the rest of the day. If a queued thing "never happens", the worker isn't running. Move to Redis/SQS when you need many workers, high throughput, or delayed jobs at scale.
 - Gotchas to name:
   - Jobs serialize models by ID and re-fetch them in the worker (`SerializesModels`).
   - Deploys must restart workers (`queue:restart`), because they run old code until then.
@@ -236,7 +256,7 @@ top products (subquery)          SCAN + SCAN               → SEARCH order_item
 ### 3.1 Stampede protection & locks (15 min) → `checkpoint/05-stampede`
 
 - **Live demo first**, on checkpoint 04: `php artisan workshop:stampede` ([`app/Console/Commands/WorkshopStampede.php:15`](https://github.com/DGarbs51/ship-fast-load-faster/blob/checkpoint/04-queues/app/Console/Commands/WorkshopStampede.php#L15)).
-  - It invalidates the dashboard cache, then uses `Concurrency::run()` to start 8 separate PHP processes that all request the top-products aggregate at the same moment.
+  - It invalidates the dashboard cache, then uses `Concurrency::run()` to start 8 separate PHP processes that all request the top-products aggregate at the same moment. We can't show this through the browser: `php artisan serve` handles one request at a time, so real concurrent requests never overlap. Separate processes do.
   - Result on 04: **8 of 8 workers ran the expensive query.**
 
 > **Blurb: The thundering herd / cache stampede**
@@ -250,6 +270,7 @@ top products (subquery)          SCAN + SCAN               → SEARCH order_item
 - **Fix part 2: `Cache::flexible()` (stale-while-revalidate).**
   - `[300, 900]`: fresh for 5 minutes, then *stale but servable* for another 10 ([`app/Services/DashboardStats.php:27`](https://github.com/DGarbs51/ship-fast-load-faster/blob/checkpoint/05-stampede/app/Services/DashboardStats.php#L27)).
   - In the stale window, users get the old value immediately and Laravel refreshes it **after the response is sent**, using `defer()`. Framework-internal locking means only one request refreshes.
+  - **Caveat on our setup:** under `php artisan serve`, "after the response" really means "before the connection closes" (see Setup assumptions), so the one request that triggers the refresh still waits for it. Everyone else gets the stale value instantly. Under PHP-FPM or Octane, even the triggering request returns immediately. This is a good moment to explain why your local server is not your production server.
 - Why we need both:
   - `flexible` alone **does not protect a fully cold key**. On a total miss it computes inline with no lock (read `Illuminate\Cache\Repository::flexible`).
   - Our invalidation creates fully cold keys on every write. So: **lock for cold, flexible for expiry.**
@@ -281,9 +302,9 @@ top products (subquery)          SCAN + SCAN               → SEARCH order_item
 - **The persistent worker model:**
   - Normal PHP-FPM boots the framework on *every* request: load config, register providers, build the container, then throw it all away.
   - Octane boots once and keeps the app in memory. Each worker serves many requests. Boot cost drops to roughly zero, and so does *forgetting*.
-- **Demo:**
-  - `composer install` on 06 (adds `laravel/octane`). `php artisan octane:install --server=frankenphp` downloads the FrankenPHP binary, which is gitignored.
-  - Then `php artisan octane:start` (Solo's *Octane* process).
+- **Demo: facilitator only.** Attendees don't run this during the session. `octane:install --server=frankenphp` downloads a ~180 MB server binary, and 70 people doing that on conference Wi-Fi would stall the room. Checkpoint 06 adds the `laravel/octane` package, but the app still runs on `php artisan serve` exactly as before.
+  - Facilitator setup, done before the session: `composer install` on 06, then `php artisan octane:install --server=frankenphp` (the binary is gitignored).
+  - On stage: stop `php artisan serve`, run `php artisan octane:start` (same port, 8000), and show the same dashboard.
   - The facilitator laptop measured `ab -n 200 -c 4 /login`: **128 req/s on `artisan serve` → 334 req/s on Octane with 2 workers** (31 ms → 12 ms per request).
   - Config: [`config/octane.php:41`](https://github.com/DGarbs51/ship-fast-load-faster/blob/checkpoint/06-octane/config/octane.php#L41) (defaults to `frankenphp`) and `max_requests` ([`config/octane.php:234`](https://github.com/DGarbs51/ship-fast-load-faster/blob/checkpoint/06-octane/config/octane.php#L234)), which recycles each worker after N requests. That's the safety net for slow memory leaks.
 - **The state-leak gotcha: show one, fix one.**
@@ -362,7 +383,7 @@ top products (subquery)          SCAN + SCAN               → SEARCH order_item
   - Prices are **command options, not quotes**. Plug in your provider's current per-million-token pricing on the day.
   - Talking point: **caching is a budget tool, not just a speed tool.** Every cache hit is a model call you didn't pay for.
   - Mention provider-side **prompt caching** (cached system prompt and tool definitions billed at a discount) as a fourth layer you get almost for free with a stable `instructions()`.
-- **Hands-on:** cache the tool calls, then queue a "deep analysis" run (`php artisan queue:work` must be running).
+- **Hands-on:** cache the tool calls, then queue a "deep analysis" run. `php artisan queue:work` must be running; without it the button shows "Running on the queue…" forever. That's a good prompt to ask: *"How would you surface a stuck job to a user?"*
 
 > **Blurb: Why AI calls need the same playbook as slow queries**
 > A model call is the slowest, most variable, and only *metered* dependency in the app: seconds of latency, a token bill on every call, and rate limits you don't control. Everything from Acts 2–3 applies directly. Don't repeat work (cache answers and tool results), don't block the request (queue long runs), protect against bursts (unique jobs, throttles, locks), and keep the parts the model touches (tools) fast and indexed. The difference is that a cache miss here costs **money** as well as time.
@@ -371,7 +392,7 @@ top products (subquery)          SCAN + SCAN               → SEARCH order_item
 
 - Run `php artisan workshop:bench` on `main` and on `checkpoint/08-ai-performance`, side by side.
   - Original dashboard: ~3 s in-process (4–6 s in the browser with Debugbar), 262 queries.
-  - Final dashboard: single-digit ms warm, ~15 queries (mostly session, auth, and cache reads).
+  - Final dashboard: ~10 ms warm, ~20 queries (all session, auth, and cache-table lookups; ~1.5 ms in total).
 - Run `php artisan workshop:ai-cost --requests=1000 --hit-rate=0.6`. Ask the room what hit rate they'd expect for *their* product.
 - The journey on one screen:
   1. **Diagnose:** measure, find the 3 buckets.
@@ -402,8 +423,9 @@ php artisan workshop:bench /dashboard --runs=5     # one page
 php artisan workshop:stampede --workers=8          # 04 vs 05
 php artisan workshop:ai-cost --hit-rate=0.6        # 08
 sqlite3 database/database.sqlite "EXPLAIN QUERY PLAN <sql>"
-php artisan queue:work                             # 04+
-php artisan schedule:work                          # 04+
-php artisan octane:start                           # 06+
+php artisan serve                                  # every attendee, all day
+npm run dev                                        # every attendee, all day
+php artisan queue:work                             # third terminal, from 04
+php artisan octane:start                           # facilitator demo only, 06
 php artisan test --compact                         # every checkpoint is green
 ```

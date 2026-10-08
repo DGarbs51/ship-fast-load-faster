@@ -32,6 +32,12 @@ php artisan serve
 npm run dev
 ```
 
+From checkpoint 04 onward, queued jobs need a worker in a third terminal:
+
+```bash
+php artisan queue:work
+```
+
 Open `http://127.0.0.1:8000`, sign in with `test@example.com` and `password`, then visit the dashboard.
 
 Debugbar and Telescope are available in local development. Telescope uses its default `/telescope` route.
