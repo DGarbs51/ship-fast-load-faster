@@ -1,5 +1,5 @@
-> **You are on `checkpoint/03-cache` — Act 2.2 "Cache layer".**
-> To be here from scratch: follow Setup below, then `git stash --include-untracked`, `git switch checkpoint/03-cache`, `composer install && npm install`, `php artisan migrate`, `php artisan cache:clear`, and `php artisan workshop:doctor`. Start the servers under Run and rerun doctor. Then: `php artisan workshop:bench`.
+> **You are on `checkpoint/04-queues` — Act 2.3 "Async layer".**
+> To be here from scratch: follow Setup below, then `git stash --include-untracked`, `git switch checkpoint/04-queues`, `composer install && npm install`, `php artisan migrate`, `php artisan cache:clear`, and `php artisan workshop:doctor`. Start the servers under Run and rerun doctor. Then: `php artisan queue:work` in a third terminal.
 
 # Ship Fast, Load Faster
 

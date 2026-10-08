@@ -34,10 +34,24 @@ class RefreshAnalyticsRollup implements ShouldBeUnique, ShouldQueue
         }
     }
 
-    /**
-     * Exercise 2.3: paste handle() here. The dashboard stays synchronous until checkpoint 04.
-     *
-     * @see OrderItem
-     */
-    public function handle(): void {}
+    public function handle(): void
+    {
+        $revenueByProduct = OrderItem::query()
+            ->toBase()
+            ->select('product_id')
+            ->selectRaw('sum(line_total) as revenue')
+            ->whereIn('id', OrderItem::query()->select('id')->latest()->limit(5000))
+            ->groupBy('product_id')
+            ->pluck('revenue', 'product_id')
+            ->map(fn (mixed $revenue): float => (float) $revenue)
+            ->all();
+
+        // ponytail: stands in for a slow third-party analytics call; delete once a real one exists.
+        usleep(random_int(800000, 1200000));
+
+        Cache::forever(self::CACHE_KEY, [
+            'refreshed_at' => now()->toISOString(),
+            'revenue_by_product' => $revenueByProduct,
+        ]);
+    }
 }

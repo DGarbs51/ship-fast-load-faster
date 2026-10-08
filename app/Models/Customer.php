@@ -11,13 +11,14 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Notifications\Notifiable;
 
 #[Fillable(['name', 'email', 'phone', 'city', 'state', 'country'])]
 #[ObservedBy(DashboardCacheObserver::class)]
 class Customer extends Model
 {
     /** @use HasFactory<CustomerFactory> */
-    use HasFactory;
+    use HasFactory, Notifiable;
 
     /**
      * @return HasMany<Order, $this>
