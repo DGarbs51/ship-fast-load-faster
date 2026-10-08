@@ -23,3 +23,10 @@ processes:
     auto_restart: false
     restart_when_changed: []
     env: {}
+  Octane:
+    command: php artisan octane:start
+    working_dir: null
+    auto_start: false
+    auto_restart: false
+    restart_when_changed: []
+    env: {}

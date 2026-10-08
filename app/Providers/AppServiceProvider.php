@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Support\AuditContext;
 use Carbon\CarbonImmutable;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Support\Facades\Date;
@@ -22,6 +24,10 @@ class AppServiceProvider extends ServiceProvider
             $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
             $this->app->register(TelescopeServiceProvider::class);
         }
+
+        // Under Octane, singleton() would capture the first request's user and log every
+        // later change as them. scoped() is flushed and re-resolved for each request.
+        $this->app->scoped(AuditContext::class, fn (Application $app): AuditContext => new AuditContext($app['auth']->user()));
     }
 
     /**

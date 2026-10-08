@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Notifications\OrderConfirmation;
+use App\Support\AuditContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -70,7 +72,7 @@ class OrderController extends Controller
         ]);
     }
 
-    public function updateStatus(Request $request, Order $order): RedirectResponse
+    public function updateStatus(Request $request, Order $order, AuditContext $audit): RedirectResponse
     {
         $validated = $request->validate([
             'status' => ['required', Rule::in(Order::STATUSES)],
@@ -80,6 +82,13 @@ class OrderController extends Controller
 
         $order->update([
             'status' => $validated['status'],
+        ]);
+
+        Log::info('Order status changed', [
+            'order' => $order->number,
+            'from' => $previousStatus,
+            'to' => $order->status,
+            'by' => $audit->actorEmail(),
         ]);
 
         if ($previousStatus !== $order->status && in_array($order->status, ['paid', 'shipped'], true)) {
