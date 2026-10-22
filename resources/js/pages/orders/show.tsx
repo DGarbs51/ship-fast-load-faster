@@ -209,7 +209,9 @@ export default function OrderShow({
                                                             key={status}
                                                             value={status}
                                                         >
-                                                            {formatStatus(status)}
+                                                            {formatStatus(
+                                                                status,
+                                                            )}
                                                         </option>
                                                     ))}
                                                 </select>

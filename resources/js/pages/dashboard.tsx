@@ -147,7 +147,7 @@ export default function Dashboard({
                     </div>
                 </div>
 
-                <div className="grid gap-4 xl:grid-cols-[minmax(0,1.5fr)_minmax(340px,1fr)] xl:max-h-[36rem]">
+                <div className="grid gap-4 xl:max-h-[36rem] xl:grid-cols-[minmax(0,1.5fr)_minmax(340px,1fr)]">
                     <Card className="min-h-0">
                         <CardHeader className="shrink-0 border-b border-border pb-4">
                             <CardTitle>Top products by revenue</CardTitle>
@@ -267,7 +267,7 @@ export default function Dashboard({
                     </Card>
                 </div>
 
-                <div className="grid gap-4 lg:grid-cols-2 lg:max-h-[32rem]">
+                <div className="grid gap-4 lg:max-h-[32rem] lg:grid-cols-2">
                     <Card className="min-h-0">
                         <CardHeader className="shrink-0 border-b border-border pb-4">
                             <CardTitle>Catalog inventory</CardTitle>
