@@ -1,0 +1,38 @@
+<?php
+
+namespace {{ namespace }};
+
+use App\Ai\Tools\SearchProducts;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
+use Laravel\Ai\Attributes\MaxSteps;
+use Laravel\Ai\Attributes\MaxTokens;
+use Laravel\Ai\Attributes\UseCheapestModel;
+use Laravel\Ai\Contracts\Agent;
+use Laravel\Ai\Contracts\HasStructuredOutput;
+use Laravel\Ai\Contracts\HasTools;
+use Laravel\Ai\Promptable;
+use Stringable;
+
+#[UseCheapestModel]
+#[MaxSteps(4)]
+#[MaxTokens(1024)]
+class {{ class }} implements Agent, HasStructuredOutput, HasTools
+{
+    use Promptable;
+
+    public function instructions(): Stringable|string
+    {
+        return 'Workshop scaffold: do not recommend products until the exercises are complete.';
+    }
+
+    /** @see SearchProducts */
+    public function tools(): iterable
+    {
+        return [];
+    }
+
+    public function schema(JsonSchema $schema): array
+    {
+        return [];
+    }
+}
