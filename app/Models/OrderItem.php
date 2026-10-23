@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use App\Observers\DashboardCacheObserver;
 use Database\Factories\OrderItemFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable(['order_id', 'product_id', 'quantity', 'unit_price', 'line_total'])]
+#[ObservedBy(DashboardCacheObserver::class)]
 class OrderItem extends Model
 {
     /** @use HasFactory<OrderItemFactory> */
