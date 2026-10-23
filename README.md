@@ -1,3 +1,6 @@
+> **You are on `checkpoint/01-diagnose` — Act 1.3 "Diagnostic exercise".**
+> To be here from scratch: follow Setup below, then `git stash --include-untracked`, `git switch checkpoint/01-diagnose`, `composer install && npm install`, `php artisan migrate`, `php artisan cache:clear`, and `php artisan workshop:doctor`. Start the servers under Run and rerun doctor. Then: `php artisan workshop:bench`.
+
 # Ship Fast, Load Faster
 
 The dashboard is slow on purpose. We'll measure it, fix one layer at a time, and measure again. This is the attendee app for the LaraconAU 2026 workshop: Laravel 13, Inertia React, and SQLite for the database, cache, and queue.
