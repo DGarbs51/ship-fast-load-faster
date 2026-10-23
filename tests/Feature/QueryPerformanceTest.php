@@ -7,14 +7,16 @@ use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Inertia\Testing\AssertableInertia as Assert;
 
 /**
- * Count the queries a GET request runs as an authenticated user.
+ * Compare cold requests so cache warmth cannot hide query growth with row count.
  */
 function queriesFor(string $uri): int
 {
+    Cache::flush();
     DB::flushQueryLog();
     DB::enableQueryLog();
 
