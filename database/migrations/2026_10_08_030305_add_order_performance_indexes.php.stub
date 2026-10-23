@@ -1,0 +1,15 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Paste the orders Schema::table block, then remove the .stub suffix before migrating.
+     */
+    public function up(): void
+    {
+    }
+};
