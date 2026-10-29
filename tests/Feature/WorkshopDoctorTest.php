@@ -88,6 +88,19 @@ test('doctor reports an unseeded or unmigrated database', function (bool $dropTa
     $this->artisan('workshop:doctor')->expectsOutputToContain('✗ Seeded SQLite admin@example.com')->assertFailed();
 })->with([false, true]);
 
+test('doctor reports an index migration that ran without the orders block', function () {
+    fakeDoctorSetup();
+    DB::table('migrations')->updateOrInsert(['migration' => '2026_10_08_030306_add_performance_indexes'], ['batch' => 99]);
+
+    if (Schema::hasIndex('orders', ['created_at'])) {
+        Schema::table('orders', fn ($table) => $table->dropIndex(['created_at']));
+    }
+
+    $this->artisan('workshop:doctor')
+        ->expectsOutputToContain('✗ Performance indexes include orders — the index migration ran before the orders block was in it; run `php artisan migrate:fresh --seed`')
+        ->assertFailed();
+});
+
 test('doctor validates web memory separately from CLI memory', function (mixed $memory, bool $passes) {
     fakeDoctorSetup(webMemory: $memory);
 
