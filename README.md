@@ -1,9 +1,13 @@
 > **You are on `checkpoint/03-cache` — Act 2.2 "Cache layer".**
-> To be here from scratch: follow Setup below, then `git stash --include-untracked`, `git switch checkpoint/03-cache`, `composer install && npm install`, `php artisan migrate`, `php artisan cache:clear`, and `php artisan workshop:doctor`. Start the servers under Run and rerun doctor. Then: `php artisan workshop:bench`.
+> To be here from scratch: follow Setup below, then `git stash --include-untracked`, `git config checkout.defaultRemote origin`, `git switch checkpoint/03-cache`, `composer install && npm install`, `php artisan migrate:fresh --seed`, `php artisan cache:clear`, and `php artisan workshop:doctor`. Start the servers under Run, log in again, and rerun doctor. Then: `php artisan workshop:bench`.
 
 # Ship Fast, Load Faster
 
 The dashboard is slow on purpose. We'll measure it, fix one layer at a time, and measure again. This is the attendee app for the LaraconAU 2026 workshop: Laravel 13, Inertia React, and SQLite for the database, cache, and queue.
+
+- **Presentation:** [present.ship-fast.app](https://present.ship-fast.app). It follows the projector and tells you which branch to be on.
+- **Log in:** `admin@example.com` / `password`. `/dashboard` redirects to `/login` until you do.
+- **Using Herd?** Set Herd › PHP › `memory_limit` to `-1` and restart PHP. The slow dashboard runs out of memory at Herd's default 128M.
 
 ## Fork and clone
 
@@ -12,10 +16,11 @@ Fork [DGarbs51/ship-fast-load-faster](https://github.com/DGarbs51/ship-fast-load
 ```bash
 git clone https://github.com/<your-username>/ship-fast-load-faster.git
 cd ship-fast-load-faster
+git config checkout.defaultRemote origin
 git branch -r
 ```
 
-You should see `origin/main` and eight `origin/checkpoint/*` branches. Start on `main`.
+You should see `origin/main` and eight `origin/checkpoint/*` branches. Start on `main`. The `git config` line lets `git switch checkpoint/...` work even if you also add an `upstream` remote; without it Git refuses with "matched multiple remote tracking branches".
 
 ## Prerequisites
 
@@ -32,6 +37,17 @@ Use npm. Sail and Docker aren't supported for this workshop.
 
 Run these from the repository root. `migrate:fresh --seed` resets the local workshop database; don't point this app at data you need to keep.
 
+**One shot:**
+
+```bash
+composer setup
+composer run dev
+```
+
+`composer setup` installs dependencies, creates `.env` and the SQLite file, seeds the database, sets `checkout.defaultRemote`, and builds the frontend. `composer run dev` starts the web server, a queue listener, and Vite in one terminal; stop it with Ctrl+C. Then check the setup in another terminal with `php artisan workshop:doctor`.
+
+**Step by step**, if you'd rather see each command:
+
 ```bash
 composer install
 npm install
@@ -45,6 +61,8 @@ php artisan workshop:doctor
 Doctor prints a fix beside each failed check. On the first run, web memory and Vite will be unverified until the servers below are running. Start them, then rerun doctor. It exits 1 until every check passes.
 
 ## Run
+
+Skip this section if `composer run dev` is already running; it starts all three.
 
 Terminal 1:
 
@@ -61,8 +79,10 @@ npm run dev
 From `checkpoint/04-queues` onward, terminal 3:
 
 ```bash
-php artisan queue:work
+php artisan queue:listen
 ```
+
+`queue:listen` reloads your code for every job, so edits to a job take effect without restarting it.
 
 Open the URL printed by `php artisan serve`. Keep the servers running and check the setup in another terminal:
 
@@ -75,13 +95,13 @@ If Herd serves the app instead, set `APP_URL` in `.env` to its URL or pass that 
 
 ## Log in
 
-Email: `admin@example.com`. Password: `password`.
+Email: `admin@example.com`. Password: `password`. Catching up resets the database, so log in again after each checkpoint switch.
 
 Visit the dashboard. Debugbar and Telescope (`/telescope`) are available in local development. Record measurements in [the findings template](workshop/FINDINGS-TEMPLATE.md); `workshop:bench` works on every branch, including `main`.
 
 ## Follow along
 
-Presenter: `<PRESENTER_URL>` — we'll share the address in the room. The screen tells you which branch to be on. If the presenter isn't available, use the checkpoint table below.
+Presenter: [present.ship-fast.app](https://present.ship-fast.app). The screen tells you which branch to be on, and **Catch me up** shows the commands below for the live branch. If the presenter isn't available, use the checkpoint table below.
 
 ## Catch up to a checkpoint
 
@@ -92,24 +112,25 @@ Each checkpoint includes the earlier ones. Checkpoint 01 now has the same app co
 | `checkpoint/01-diagnose` | Act 1.3 — Diagnostic exercise | A catch-up point for profiling; benchmark, slow-query log, and findings template already exist on `main`. |
 | `checkpoint/02-queries` | Act 2.1 — Query layer | Indexes, eager loading, database aggregates, and a latest-order subquery. |
 | `checkpoint/03-cache` | Act 2.2 — Cache layer | Cached dashboard stats with versioned keys and observer invalidation. |
-| `checkpoint/04-queues` | Act 2.3 — Async layer | Unique queued analytics rebuilds and queued order confirmations. Start a queue worker. |
+| `checkpoint/04-queues` | Act 2.3 — Async layer | Unique queued analytics rebuilds and queued order confirmations. Start `php artisan queue:listen`. |
 | `checkpoint/05-stampede` | Acts 3.1–3.2 — Stampedes and memory | Stale-while-revalidate, a rebuild lock, and lazy customer exports. |
 | `checkpoint/06-octane` | Act 3.3 — Octane | Octane configuration and a scoped audit context. The Octane demo is on screen; `artisan serve` still works locally. |
 | `checkpoint/07-ai-agent` | Acts 4.1–4.2 — AI SDK and tools | Product advisor, product-search tool, structured output, and an advisor page. |
 | `checkpoint/08-ai-performance` | Act 4.3 — AI performance | Cached tool results and responses, queued analysis, and a cost projection command. |
 
-Stop the servers and queue worker before switching. Replace `checkpoint/NN-slug` with the branch on screen:
+Stop the servers and queue listener before switching. Replace `checkpoint/NN-slug` with the branch on screen:
 
 ```bash
 git stash --include-untracked
+git config checkout.defaultRemote origin
 git switch checkpoint/NN-slug
 composer install && npm install
-php artisan migrate
+php artisan migrate:fresh --seed
 php artisan cache:clear
 php artisan workshop:doctor
 ```
 
-Restart the servers from **Run** and rerun doctor. Your work is in `git stash list`; don't pop it onto a later checkpoint unless you want to merge those changes. If you recovered branches from `upstream`, use `git switch --track upstream/checkpoint/NN-slug` on the first switch.
+Restart the servers from **Run**, log in again, and rerun doctor. `migrate:fresh --seed` rebuilds the local workshop database so it matches the checkpoint exactly, including indexes from a migration you ran earlier. Your code edits are in `git stash list`; don't pop them onto a later checkpoint unless you want to merge those changes. The `git config` line is harmless to repeat; it makes `git switch` pick `origin` when you also have an `upstream` remote, and still finds the branch on `upstream` if your fork only has `main`.
 
 For checkpoints 07–08, real advisor requests need your own provider key and can incur charges. You can follow the demo without one; tests use fakes, and the default benchmark doesn't call an AI provider.
 
@@ -131,6 +152,10 @@ nvm install
 nvm use
 npm install
 ```
+
+**`fatal: 'checkpoint/...' matched multiple remote tracking branches`?** You have both `origin` and `upstream`. Run `git config checkout.defaultRemote origin`, then switch again.
+
+**`Nothing to migrate` after editing the index migration, or `EXPLAIN QUERY PLAN` still says `SCAN orders`?** The migration ran before the `orders` block was in it, and Laravel won't run the same migration twice. Run `php artisan migrate:fresh --seed` (resets local workshop data). `php artisan workshop:doctor` reports this.
 
 **“Allowed memory size exhausted” on `/dashboard`?** Set Herd's PHP `memory_limit` to `-1`, restart PHP, and rerun doctor against the Herd URL. CLI and web PHP can load different ini files. `php artisan serve` commonly runs unbounded; doctor reports the actual limit rather than assuming it.
 

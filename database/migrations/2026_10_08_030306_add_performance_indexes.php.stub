@@ -35,4 +35,27 @@ return new class extends Migration
             $table->index('customer_id');
         });
     }
+
+    /**
+     * Drop each index only if it exists, so a rollback still works when up() ran before the orders block was pasted.
+     */
+    public function down(): void
+    {
+        $indexes = [
+            'categories' => [['parent_id']],
+            'customers' => [['created_at']],
+            'products' => [['category_id'], ['stock_count'], ['created_at']],
+            'orders' => [['customer_id', 'created_at'], ['created_at'], ['status']],
+            'order_items' => [['order_id'], ['product_id', 'created_at']],
+            'reviews' => [['product_id', 'created_at'], ['customer_id']],
+        ];
+
+        foreach ($indexes as $table => $columnSets) {
+            foreach ($columnSets as $columns) {
+                if (Schema::hasIndex($table, $columns)) {
+                    Schema::table($table, fn (Blueprint $blueprint) => $blueprint->dropIndex($columns));
+                }
+            }
+        }
+    }
 };
