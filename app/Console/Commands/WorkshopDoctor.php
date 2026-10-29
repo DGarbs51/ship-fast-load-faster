@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Process;
+use Illuminate\Support\Facades\Schema;
 
 #[Signature('workshop:doctor {--url= : Running app URL (defaults to APP_URL)}')]
 #[Description('Check the local workshop setup and print fixes for anything missing')]
@@ -47,6 +48,13 @@ class WorkshopDoctor extends Command
         }
 
         $this->check($seeded, 'Seeded SQLite admin@example.com', 'set DB_CONNECTION=sqlite and run `touch database/database.sqlite && php artisan migrate:fresh --seed` (resets local workshop data)');
+
+        // Migrating the copied stub before pasting the orders block records the migration without
+        // those indexes, so a later `migrate` (even on checkpoint 02) reports nothing to migrate.
+        if ($seeded && DB::table('migrations')->where('migration', '2026_10_08_030306_add_performance_indexes')->exists()) {
+            $this->check(Schema::hasIndex('orders', ['created_at']), 'Performance indexes include orders',
+                'the index migration ran before the orders block was in it; run `php artisan migrate:fresh --seed` (resets local workshop data)');
+        }
 
         $memoryFix = 'set Herd › PHP › memory_limit = -1, or set memory_limit=512M in the active php.ini; CLI and web limits differ; `php artisan serve` commonly runs unbounded';
         $memory = (string) ini_get('memory_limit');

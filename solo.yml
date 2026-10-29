@@ -3,7 +3,7 @@ name: ship-fast-load-faster
 icon: null
 processes:
   Queue:
-    command: php artisan queue:work
+    command: php artisan queue:listen --tries=1 --timeout=0
     working_dir: null
     auto_start: false
     auto_restart: true

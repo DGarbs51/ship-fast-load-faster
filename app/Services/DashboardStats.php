@@ -21,13 +21,6 @@ class DashboardStats
      */
     public const string VERSION_KEY = 'dashboard:version';
 
-    /**
-     * Serve from cache for 5 minutes; for the next 10 serve the stale value and refresh after the response.
-     */
-    private const array FRESH_THEN_STALE_SECONDS = [300, 900];
-
-    private const int REBUILD_LOCK_SECONDS = 30;
-
     public static function flush(): void
     {
         Cache::forever(self::VERSION_KEY, Str::ulid()->toString());
@@ -182,10 +175,11 @@ class DashboardStats
             // One request rebuilds; the rest wait, then read what it stored. Waiting as long as the
             // lock lives means a timeout only surfaces when a rebuild outlives the lock itself, which
             // is a bug to fix (move the work to a queue), not a reason to stampede.
-            return Cache::lock("{$key}:rebuild", self::REBUILD_LOCK_SECONDS)
-                ->block(self::REBUILD_LOCK_SECONDS, fn () => Cache::flexible($key, self::FRESH_THEN_STALE_SECONDS, $callback));
+            return Cache::lock("{$key}:rebuild", 30)
+                ->block(30, fn () => Cache::flexible($key, [300, 900], $callback));
         }
 
-        return Cache::flexible($key, self::FRESH_THEN_STALE_SECONDS, $callback);
+        // Fresh for 5 minutes (300s); until 15 minutes (900s), serve the stale value and refresh after the response.
+        return Cache::flexible($key, [300, 900], $callback);
     }
 }
