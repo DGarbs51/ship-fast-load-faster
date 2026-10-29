@@ -23,7 +23,7 @@ class RefreshAnalyticsRollup implements ShouldBeUnique, ShouldQueue
 
     /**
      * Queue a refresh when the rollup is missing or older than five minutes. Dispatching
-     * is one cheap insert into the jobs table; the slow work runs in `queue:work`.
+     * is one cheap insert into the jobs table; the slow work runs in `queue:listen`.
      */
     public static function dispatchIfStale(): void
     {
