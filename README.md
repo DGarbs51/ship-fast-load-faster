@@ -2,7 +2,7 @@
 
 The dashboard is slow on purpose. We'll measure it, fix one layer at a time, and measure again. This is the attendee app for the LaraconAU 2026 workshop: Laravel 13, Inertia React, and SQLite for the database, cache, and queue.
 
-- **Presentation:** [present.ship-fast.app](https://present.ship-fast.app). It follows the projector and tells you which branch to be on.
+- **Presentation:** [ship-fast-present.laravel-demo.cloud](https://ship-fast-present.laravel-demo.cloud). It follows the projector and tells you which branch to be on.
 - **Log in:** `admin@example.com` / `password`. `/dashboard` redirects to `/login` until you do.
 - **Using Herd?** Set Herd › PHP › `memory_limit` to `-1` and restart PHP. The slow dashboard runs out of memory at Herd's default 128M.
 
@@ -98,7 +98,7 @@ Visit the dashboard. Debugbar and Telescope (`/telescope`) are available in loca
 
 ## Follow along
 
-Presenter: [present.ship-fast.app](https://present.ship-fast.app). The screen tells you which branch to be on, and **Catch me up** shows the commands below for the live branch. If the presenter isn't available, use the checkpoint table below.
+Presenter: [ship-fast-present.laravel-demo.cloud](https://ship-fast-present.laravel-demo.cloud). The screen tells you which branch to be on, and **Catch me up** shows the commands below for the live branch. If the presenter isn't available, use the checkpoint table below.
 
 ## Catch up to a checkpoint
 
